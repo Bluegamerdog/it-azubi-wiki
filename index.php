@@ -6,6 +6,7 @@ include 'includes/header.php';
 
 // Alle Beiträge abrufen
 $posts = fetch_all_posts($pdo);
+
 ?>
 
 <div class="container mt-4">
