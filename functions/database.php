@@ -2,13 +2,17 @@
 
 // @jonathan - Might convert this to classes later
 
-// require_once 'utils.php';
+require_once 'utils.php';
+
+loadEnv('.env');
 
 try {
+    $db = getenv('DB_NAME');
+    $host = getenv('DB_HOST');
     $pdo = new PDO(
-        'mysql:host=localhost;dbname=itforumwiki_db;charset=utf8',
-        '',
-        '',
+        "mysql:host=$host;dbname=$db;charset=utf8",
+        getenv('DB_USER'),
+        getenv('DB_PASS'),
     );
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 } catch (PDOException $e) {
