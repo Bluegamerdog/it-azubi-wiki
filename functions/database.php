@@ -4,7 +4,8 @@
 
 require_once 'utils.php';
 
-loadEnv('.env');
+$envFile = file_exists(__DIR__ . '/.env.local') ? '.env.local' : '.env';
+loadEnv($envFile);
 
 try {
     $db = getenv('DB_NAME');
