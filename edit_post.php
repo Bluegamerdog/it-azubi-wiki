@@ -1,43 +1,27 @@
 <?php
-// Session starten (für Login-Verwaltung)
 session_start();
-require_once 'functions/database.php';   // korrigierter Pfad
-require_once 'functions/utils.php';      // falls check_admin dort ist
+require_once 'functions/database.php';   // PDO-Verbindung
+require_once 'functions/utils.php';      // check_admin
 
-// Login-Versuch auswerten
-$username = (isset($_POST["username"]) && is_string($_POST["username"])) ? trim($_POST["username"]) : "";
-$password = (isset($_POST["password"]) && is_string($_POST["password"])) ? $_POST["password"] : "";
+// Zugriff prüfen (nur Administratoren)
+// if (!isset($_SESSION["username"])) {
+//     header("Location: login.php");
+//     exit();
+// }
 
-// Wenn Login-Daten eingegeben wurden, prüfen
-if (!empty($username) && !empty($password) && check_admin($username, $password)) {
-    $_SESSION["username"] = $username;
-}
+// Beiträge abrufen (PDO)
+$stmt = $pdo->prepare("SELECT * FROM posts ORDER BY created_at DESC");
+$stmt->execute();
+$posts = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-// Wenn nicht eingeloggt → Meldung und Abbruch
-if (!isset($_SESSION["username"])) {
-    include 'includes/header.php';
-?>
-    <div class="container mt-5">
-        <div class="alert alert-danger">
-            <strong>Zugriff verweigert:</strong> Bitte melde dich an.
-        </div>
-        <a href="login.php" class="btn btn-success">Zum Login</a>
-    </div>
-<?php
-    include 'includes/footer.php';
-    exit();
-}
-
-// Beiträge abrufen
-$posts = fetch_posts($conn);  // angepasst auf mysqli
 include 'includes/header.php';
 ?>
 
 <div class="container mt-4">
-    <h1>Adminbereich – Beiträge verwalten</h1>
+    <h1>Beiträge verwalten</h1>
 
     <?php if (empty($posts)): ?>
-        <div class="alert alert-info">Noch keine Beiträge vorhanden.</div>
+        <div class="alert alert-info">Es sind keine Beiträge vorhanden.</div>
     <?php endif; ?>
 
     <ul class="list-group">
@@ -55,7 +39,6 @@ include 'includes/header.php';
                     <!-- Löschen -->
                     <form method="post" action="delete_post.php" class="d-inline">
                         <input type="hidden" name="id" value="<?= htmlspecialchars($post['id']) ?>">
-                        <input type="hidden" name="title" value="<?= htmlspecialchars($post['title']) ?>">
                         <button type="submit" class="btn btn-danger btn-sm">Löschen</button>
                     </form>
                 </div>
@@ -63,7 +46,6 @@ include 'includes/header.php';
         <?php endforeach; ?>
     </ul>
 
-    <!-- Neuen Beitrag erstellen -->
     <a href="create_post.php" class="btn btn-success mt-3">Neuen Beitrag erstellen</a>
 </div>
 

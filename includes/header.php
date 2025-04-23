@@ -1,10 +1,9 @@
-
 <!DOCTYPE html>
 <html lang="de">
 
 <head>
     <meta charset="UTF-8">
-    <title>Blog</title>
+    <title>Forum</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 
@@ -25,13 +24,17 @@
                     <li class="nav-item">
                         <a href="create_post.php" class="nav-link active">Neuer Beitrag</a>
                     </li>
-                    <?php if (isset($_SESSION['admin'])): ?>
-                        <li class="nav-item">
-                            <a href="delete_post.php" class="nav-link active">Beiträge Verwalten</a>
-                        </li>
-                    <?php endif; ?>
+
+                    <li class="nav-item">
+                        <a href="edit_post.php" class="nav-link active">Beiträge bearbeiten</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a href="delete_post.php" class="nav-link active">Beiträge Verwalten</a>
+                    </li>
+
                 </ul>
-                
+
                 <div class="d-flex ms-auto align-items-center">
                     <span class="navbar-text me-3">
                         <?= isset($_SESSION['admin']) ? htmlspecialchars($_SESSION['admin']) : 'Gast' ?>

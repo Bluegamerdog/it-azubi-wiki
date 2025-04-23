@@ -6,9 +6,9 @@
 
 try {
     $pdo = new PDO(
-        'mysql:host=localhost;dbname=itforumwiki_db;charset=utf8',
-        '',
-        '',
+        'mysql:host=localhost;dbname=itforumwiki;charset=utf8',
+        'admin',
+        '!*4rcSgd7-i(HObW',
     );
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 } catch (PDOException $e) {
