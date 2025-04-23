@@ -39,6 +39,12 @@
                     <?php if (isset($_SESSION['admin'])): ?>
                         <form action="logout.php" method="post" class="d-inline">
                             <button type="submit" name="logout" class="btn btn-outline-dark btn-sm">Logout</button>
+
+
+                            <button id="toggle-darkmode">Dark Mode umschalten</button>
+
+
+
                         </form>
                     <?php else: ?>
                         <a href="login.php" class="btn btn-outline-primary btn-sm">Login</a>
