@@ -3,8 +3,7 @@ session_start();
 require_once 'functions/database.php';   // PDO-Verbindung
 require_once 'functions/utils.php';      // check_admin
 
-// Zugriff prüfen (nur Administratoren)
-if (!isset($_SESSION["username"])) {
+if (!isset($_SESSION["username"]) || !isset($_SESSION["userid"])) {
     header("Location: login.php");
     exit();
 }
@@ -30,14 +29,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     // Wenn keine Fehler aufgetreten sind, den Beitrag speichern
     if (empty($errors)) {
-        $stmt = $pdo->prepare("INSERT INTO posts (title, content, created_at) VALUES (:title, :content, NOW())");
-        $stmt->execute([
-            ':title' => $title,
-            ':content' => $content
-        ]);
+        create_post($pdo, $_SESSION['userid'], $title, $content);
 
         $success = true;
-        header('Location: admin_dashboard.php');
+        header('Location: index.php');
         exit();
     }
 }
@@ -67,11 +62,13 @@ include 'includes/header.php';
     <form method="post">
         <div class="mb-3">
             <label for="title" class="form-label">Titel</label>
-            <input type="text" class="form-control" id="title" name="title" value="<?= htmlspecialchars($title) ?>" required>
+            <input type="text" class="form-control" id="title" name="title" value="<?= htmlspecialchars($title) ?>"
+                required>
         </div>
         <div class="mb-3">
             <label for="content" class="form-label">Inhalt</label>
-            <textarea class="form-control" id="content" name="content" rows="5" required><?= htmlspecialchars($content) ?></textarea>
+            <textarea class="form-control" id="content" name="content" rows="5"
+                required><?= htmlspecialchars($content) ?></textarea>
         </div>
         <button type="submit" class="btn btn-success">Speichern</button>
     </form>

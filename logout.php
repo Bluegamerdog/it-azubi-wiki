@@ -1,6 +1,6 @@
 <?php
 session_start();
-include 'includes/header.php';
+
 
 // Überprüfen, ob der Logout-Button gedrückt wurde
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['logout'])) {
@@ -12,21 +12,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['logout'])) {
 
     // Weiterleitung zur Login-Seite
     header("Location: login.php");
-    exit;
+    exit();
 }
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['zurück'])) {
-header("Location: register.php"); //<---------------------------------vorherige seite einfügen
-exit;
+    header("Location: login.php");
+    exit();
 }
+
+include 'includes/header.php';
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Logout</title>
 </head>
+
 <body>
     <h1>Wollen sie sich wirklich Ausloggen?</h1>
     <form method="post">
@@ -38,4 +42,5 @@ exit;
     include 'includes/footer.php';
     ?>
 </body>
+
 </html>
