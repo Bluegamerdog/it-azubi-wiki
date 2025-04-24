@@ -33,7 +33,7 @@ include 'includes/header.php';
         <p><?= nl2br(htmlspecialchars($post["content"])) ?></p>
     </div>
 
-    <a href="edit_post.php" class="btn btn-secondary mt-3">Zurück zur Übersicht</a>
+    <a href="index.php" class="btn btn-secondary mt-3">Zurück zur Übersicht</a>
 </div>
 
 <?php include 'includes/footer.php'; ?>
