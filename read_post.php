@@ -23,7 +23,30 @@ if (!$post) {
 }
 
 include 'includes/header.php';
+
+// // Like button
+// if ($hasLiked) {
+//     $hasLiked = false;
+// } elseif ($hasDisliked) {
+//     $hasDisliked = false;
+//     $hasLiked = true;
+// } else {
+//     $hasLiked = true;
+// }
+// ;
+
+// // Dislike button
+// if ($hasDisliked) {
+//     $hasDisliked = false;
+// } elseif ($hasLiked) {
+//     $hasLiked = false;
+//     $hasDisliked = true;
+// } else {
+//     $hasDisliked = true;
+// }
+;
 ?>
+
 
 <div class="container mt-4">
     <h1><?= htmlspecialchars($post["title"]) ?></h1>

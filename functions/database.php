@@ -171,3 +171,87 @@ function delete_comment(PDO $pdo, int|string $comment_id): bool
     $stmt = $pdo->prepare("DELETE FROM comments WHERE id = :comment_id");
     return $stmt->execute(['comment_id' => $comment_id]);
 }
+
+// == POST REACTIONS ==
+// Get total upvotes and downvotes for a post 
+// -- get_reaction_counts($pdo, 1); // ['upvote' => x, 'downvote' => y]
+
+// $reactions = get_reaction_counts($pdo, $post_id);
+// $upvote_count = $reactions['upvote'];
+// $downvote_count = $reactions['downvote'];
+function get_reaction_counts(PDO $pdo, int $post_id): array
+{
+    $stmt = $pdo->prepare("SELECT reaction_type, COUNT(*) as count
+        FROM post_reactions
+        WHERE post_id = :post_id
+        GROUP BY reaction_type
+    ");
+    $stmt->execute(['post_id' => $post_id]);
+
+    $results = ['upvote' => 0, 'downvote' => 0];
+    foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $row) {
+        $results[$row['reaction_type']] = (int) $row['count'];
+    }
+    return $results;
+}
+
+// Get a user's reaction for a specific post
+function get_user_reaction(PDO $pdo, int $post_id, int $user_id): ?string
+{
+    $stmt = $pdo->prepare("
+        SELECT reaction_type
+        FROM post_reactions
+        WHERE post_id = :post_id AND user_id = :user_id
+    ");
+    $stmt->execute(['post_id' => $post_id, 'user_id' => $user_id]);
+
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+    return $result ? $result['reaction_type'] : null;
+}
+
+// Add or update a user's reaction to a post 
+// set_reaction($pdo, $post_id, $user_id, 'upvote'); // User 1 upvotes post 1
+// set_reaction($pdo, $post_id, $user_id, 'downvote'); // Changes to downvote
+
+function set_reaction(PDO $pdo, int $post_id, int $user_id, string $reaction_type): bool
+{
+    $current = get_user_reaction($pdo, $post_id, $user_id);
+
+    if ($current === $reaction_type) {
+        // Toggle off if same reaction
+        return remove_reaction($pdo, $post_id, $user_id);
+    }
+
+    if ($current === null) {
+        $stmt = $pdo->prepare("
+            INSERT INTO post_reactions (post_id, user_id, reaction_type)
+            VALUES (:post_id, :user_id, :reaction_type)
+        ");
+    } else {
+        $stmt = $pdo->prepare("
+            UPDATE post_reactions
+            SET reaction_type = :reaction_type
+            WHERE post_id = :post_id AND user_id = :user_id
+        ");
+    }
+
+    return $stmt->execute([
+        'post_id' => $post_id,
+        'user_id' => $user_id,
+        'reaction_type' => $reaction_type
+    ]);
+}
+
+// Remove a user's reaction
+// remove_reaction($pdo, 1, 1, 'downvote'); // Removes the downvote
+function remove_reaction(PDO $pdo, int $post_id, int $user_id): bool
+{
+    $stmt = $pdo->prepare("
+        DELETE FROM post_reactions
+        WHERE post_id = :post_id AND user_id = :user_id
+    ");
+    return $stmt->execute([
+        'post_id' => $post_id,
+        'user_id' => $user_id
+    ]);
+}

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 23, 2025 at 09:33 AM
+-- Generation Time: Apr 24, 2025 at 10:33 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `itforumwiki_db`
+-- Database: `itforumwiki`
 --
 
 -- --------------------------------------------------------
@@ -67,6 +67,19 @@ INSERT INTO `posts` (`id`, `author_id`, `title`, `content`, `created_at`, `updat
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `post_reactions`
+--
+
+CREATE TABLE `post_reactions` (
+  `id` int(11) NOT NULL,
+  `post_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `reaction_type` enum('upvote','downvote') NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `users`
 --
 
@@ -94,8 +107,8 @@ INSERT INTO `users` (`id`, `username`, `email`, `password`, `created_at`) VALUES
 --
 ALTER TABLE `comments`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `author_comments-users` (`author_id`),
-  ADD KEY `post_comments_posts` (`post_id`);
+  ADD KEY `comments-posts` (`post_id`),
+  ADD KEY `author-users` (`author_id`);
 
 --
 -- Indexes for table `posts`
@@ -103,6 +116,14 @@ ALTER TABLE `comments`
 ALTER TABLE `posts`
   ADD PRIMARY KEY (`id`),
   ADD KEY `author_posts-users` (`author_id`);
+
+--
+-- Indexes for table `post_reactions`
+--
+ALTER TABLE `post_reactions`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `reaction-user` (`user_id`),
+  ADD KEY `reaction-post` (`post_id`);
 
 --
 -- Indexes for table `users`
@@ -129,6 +150,12 @@ ALTER TABLE `posts`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
+-- AUTO_INCREMENT for table `post_reactions`
+--
+ALTER TABLE `post_reactions`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
@@ -142,14 +169,21 @@ ALTER TABLE `users`
 -- Constraints for table `comments`
 --
 ALTER TABLE `comments`
-  ADD CONSTRAINT `author_comments-users` FOREIGN KEY (`author_id`) REFERENCES `users` (`id`),
-  ADD CONSTRAINT `post_comments_posts` FOREIGN KEY (`post_id`) REFERENCES `posts` (`id`);
+  ADD CONSTRAINT `author-users` FOREIGN KEY (`author_id`) REFERENCES `users` (`id`),
+  ADD CONSTRAINT `comments-posts` FOREIGN KEY (`post_id`) REFERENCES `posts` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `posts`
 --
 ALTER TABLE `posts`
-  ADD CONSTRAINT `author_posts-users` FOREIGN KEY (`author_id`) REFERENCES `users` (`id`);
+  ADD CONSTRAINT `author_posts-users` FOREIGN KEY (`author_id`) REFERENCES `users` (`id`) ON DELETE NO ACTION;
+
+--
+-- Constraints for table `post_reactions`
+--
+ALTER TABLE `post_reactions`
+  ADD CONSTRAINT `reaction-post` FOREIGN KEY (`post_id`) REFERENCES `posts` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `reaction-user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE NO ACTION;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
