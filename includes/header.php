@@ -5,36 +5,15 @@
     <meta charset="UTF-8">
     <title>IT Forum</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/darkmode.css">
     <link rel="icon" href="assets/favicon.ico" type="image/x-icon">
-    <style>
-        body.dark-mode {
-            background-color: #121212;
-            color: #f0f0f0;
-        }
 
-        .dark-mode .navbar {
-            background-color: #1f1f1f !important;
-        }
-
-        .dark-mode .nav-link {
-            color: #f0f0f0 !important;
-        }
-
-        .dark-mode .btn-outline-dark {
-            color: #f0f0f0;
-            border-color: #f0f0f0;
-        }
-
-        .dark-mode .btn-outline-primary {
-            color: #f0f0f0;
-            border-color: #007bff;
-        }
-    </style>
-
-
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js" defer></script>
+    <script src="assets/js/darkmode.js" defer></script>
 </head>
 
-<body>
+<body class="d-flex flex-column min-vh-100">
     <nav class="navbar navbar-expand-lg bg-body-tertiary">
         <div class="container-fluid">
             <a class="navbar-brand" href="#">IT Forum</a>
