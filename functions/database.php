@@ -84,12 +84,46 @@ function update_user(PDO $pdo, int|string $user_id, $data): bool
 
 // == POSTS ==
 
-function fetch_all_posts(PDO $pdo): array
+function fetch_all_posts(PDO $pdo, $sorted_by = 'newest', $days_old = 'all'): array
 {
-    $stmt = $pdo->prepare("SELECT * FROM posts");
-    $stmt->execute();
+    $whereClause = '';
+    $params = [];
+
+    // Filter by days old
+    if ($days_old != 'all') {
+        $date_limit = date('Y-m-d', strtotime("-$days_old days"));
+        $whereClause .= " WHERE created_at >= :date_limit";
+        $params['date_limit'] = $date_limit;
+    }
+
+    // Sorting logic
+    switch ($sorted_by) {
+        case 'oldest':
+            $orderBy = "ORDER BY created_at ASC";
+            break;
+        case 'most_activity':
+            // You can modify this query to use actual "activity" data (e.g., comment count, vote count)
+            $orderBy = "ORDER BY (SELECT COUNT(*) FROM comments WHERE post_id = posts.id) DESC";
+            break;
+        case 'trending':
+            // Trending can be based on a combination of factors such as votes, comments, etc.
+            $orderBy = "ORDER BY (SELECT COUNT(*) FROM comments WHERE post_id = posts.id) DESC, created_at DESC";
+            break;
+        case 'no_comments':
+            $whereClause .= ($whereClause ? " AND" : " WHERE") . " (SELECT COUNT(*) FROM comments WHERE post_id = posts.id) = 0";
+            $orderBy = "ORDER BY created_at DESC";
+            break;
+        case 'newest':
+        default:
+            $orderBy = "ORDER BY created_at DESC";
+            break;
+    }
+
+    $stmt = $pdo->prepare("SELECT * FROM posts" . $whereClause . " " . $orderBy);
+    $stmt->execute($params);
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
+
 
 function fetch_posts_by_user(PDO $pdo, int|string $author_id): array
 {
