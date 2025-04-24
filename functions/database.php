@@ -24,21 +24,21 @@ try {
 
 function fetch_all_users(PDO $pdo): array
 {
-    $stmt = $pdo->prepare("SELECT username, email FROM users");
+    $stmt = $pdo->prepare("SELECT id, username, email, 'password' FROM users");
     $stmt->execute();
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
 function fetch_user(PDO $pdo, int|string $user_id)
 {
-    $stmt = $pdo->prepare("SELECT username, email FROM users WHERE id = :user_id");
+    $stmt = $pdo->prepare("SELECT id, username, email FROM users WHERE id = :user_id");
     $stmt->execute(['user_id' => $user_id]);
     return $stmt->fetch(PDO::FETCH_ASSOC);
 }
 
 function fetch_user_by_username(PDO $pdo, string $username)
 {
-    $stmt = $pdo->prepare("SELECT username, email FROM users WHERE username = :username");
+    $stmt = $pdo->prepare("SELECT id, username, email, password FROM users WHERE username = :username");
     $stmt->execute(['username' => $username]);
     return $stmt->fetch(PDO::FETCH_ASSOC);
 }
@@ -46,8 +46,15 @@ function fetch_user_by_username(PDO $pdo, string $username)
 function create_user(PDO $pdo, string $username, string $email, string $password): bool
 {
     $passwordHash = password_hash($password, PASSWORD_DEFAULT);
-    $stmt = $pdo->prepare("INSERT INTO users (username, email, password) VALUES (:username, :email, :password)");
-    return $stmt->execute(['username' => $username, 'email' => $email, 'password' => $passwordHash]);
+    $stmt = $pdo->prepare("
+        INSERT INTO users (username, email, password) 
+        VALUES (:username, :email, :password)
+    ");
+    return $stmt->execute([
+        'username' => $username,
+        'email'    => $email,
+        'password' => $passwordHash
+    ]);
 }
 
 function delete_user(PDO $pdo, int $user_id): bool
@@ -84,12 +91,46 @@ function update_user(PDO $pdo, int|string $user_id, $data): bool
 
 // == POSTS ==
 
-function fetch_all_posts(PDO $pdo): array
+function fetch_all_posts(PDO $pdo, $sorted_by = 'newest', $days_old = 'all'): array
 {
-    $stmt = $pdo->prepare("SELECT * FROM posts");
-    $stmt->execute();
+    $whereClause = '';
+    $params = [];
+
+    // Filter by days old
+    if ($days_old != 'all') {
+        $date_limit = date('Y-m-d', strtotime("-$days_old days"));
+        $whereClause .= " WHERE created_at >= :date_limit";
+        $params['date_limit'] = $date_limit;
+    }
+
+    // Sorting logic
+    switch ($sorted_by) {
+        case 'oldest':
+            $orderBy = "ORDER BY created_at ASC";
+            break;
+        case 'most_activity':
+            // You can modify this query to use actual "activity" data (e.g., comment count, vote count)
+            $orderBy = "ORDER BY (SELECT COUNT(*) FROM comments WHERE post_id = posts.id) DESC";
+            break;
+        case 'trending':
+            // Trending can be based on a combination of factors such as votes, comments, etc.
+            $orderBy = "ORDER BY (SELECT COUNT(*) FROM comments WHERE post_id = posts.id) DESC, created_at DESC";
+            break;
+        case 'no_comments':
+            $whereClause .= ($whereClause ? " AND" : " WHERE") . " (SELECT COUNT(*) FROM comments WHERE post_id = posts.id) = 0";
+            $orderBy = "ORDER BY created_at DESC";
+            break;
+        case 'newest':
+        default:
+            $orderBy = "ORDER BY created_at DESC";
+            break;
+    }
+
+    $stmt = $pdo->prepare("SELECT * FROM posts" . $whereClause . " " . $orderBy);
+    $stmt->execute($params);
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
+
 
 function fetch_posts_by_user(PDO $pdo, int|string $author_id): array
 {
