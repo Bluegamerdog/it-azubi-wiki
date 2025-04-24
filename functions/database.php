@@ -4,7 +4,7 @@
 
 require_once 'utils.php';
 
-$envFile = file_exists(__DIR__ . '/.env.local') ? '.env.local' : '.env';
+$envFile = file_exists('.env.development') ? '.env.development' : '.env';
 loadEnv($envFile);
 
 try {

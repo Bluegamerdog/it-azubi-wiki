@@ -8,7 +8,7 @@
 $deployDir = __DIR__ . '/deploy';
 
 // List of files/folders to exclude from deployment
-$exclude = ['deploy', '.git', '.gitignore', '.example.env', '.vscode', 'docs', '.env.production', '.env.local', 'README.md'];
+$exclude = ['deploy', '.git', '.gitignore', '.example.env', '.vscode', 'docs', '.env.production', '.env.development', 'README.md'];
 
 // Recursively delete a folder
 function deleteDir($dir)
