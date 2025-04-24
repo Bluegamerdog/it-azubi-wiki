@@ -39,11 +39,11 @@ if ($days_old != 'all') {
 <div class="container mt-5">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1><class="fw-bold"><?= $title ?></h1>
-            <a href="create_post.php" class="btn btn-primary">Create Post</a>
+        <a href="create_post.php" class="btn btn-primary">Create Post</a>
     </div>
 
     <!-- Filters Section -->
-    <form method="GET" class="mb-4">
+    <form method="GET" class="mb-5">
         <div class=" justify-content-between  ">
             <p class="mb-2 text-muted ms-auto">
                 <?= $postCount ?> <?= $postCount == 1 ? "Beitrag" : "Beiträge" ?>
@@ -81,42 +81,44 @@ if ($days_old != 'all') {
         <div class="alert alert-info">Es sind noch keine Beiträge vorhanden.</div>
     <?php else: ?>
         <div class="list-group">
-            <?php foreach ($posts as $post): ?>
-                <div
-                    class="post-card list-group-item list-group-item-action mb-3 rounded shadow-sm border-0 p-3 d-flex flex-column flex-md-row justify-content-between align-items-start">
-                    <div class="me-4 d-flex flex-column">
-                        <p class="mb-2 text-muted small ms-auto">
-                            <?= 0 ?> Votes
-                        </p>
-                        <p class="mb-2 text-muted small ms-auto">
-                            <?= 0 ?> Kommentare
-                        </p>
-                    </div>
+            <?php foreach ($posts as $post):
+                $comments = fetch_comments_by_post($pdo, $post['id']);
+                $commentCount = $comments ? count($comments) : 0;
+                $votes = [];
+                $voteCount = $votes ? count($votes) : 0;
+                $author = $post['author_id'] ? fetch_user($pdo, $post['author_id']) : null;
+                ?>
+                <div class="post-card list-group-item list-group-item-action mb-3 rounded shadow-sm border-2 p-3">
 
-                    <div class="flex-grow-1">
-                        <h5 class="fw-semibold">
-                            <a href="read_post.php?id=<?= htmlspecialchars($post['id']) ?>"
-                                class="text-decoration-none link-primary">
-                                <?= htmlspecialchars($post['title']) ?>
-                            </a>
-                        </h5>
-                        <p class="mb-2 text-muted small">
-                            <?= nl2br(htmlspecialchars(substr($post['content'], 0, 180))) ?>
-                            <?= strlen($post['content']) > 180 ? '...' : '' ?>
-                        </p>
+                    <!-- Post Title and Content -->
+                    <h5 class="fw-semibold">
+                        <a href="read_post.php?id=<?= htmlspecialchars($post['id']) ?>"
+                            class="text-decoration-none link-primary">
+                            <?= htmlspecialchars($post['title']) ?>
+                        </a>
+                    </h5>
+                    <p class="mb-2 text-muted small">
+                        <?= nl2br(htmlspecialchars(substr($post['content'], 0, 180))) . (strlen($post['content']) > 180 ? '...' : '') ?>
+                    </p>
 
-                        <div class="d-flex justify-content-end text-muted small">
-                            Von <strong
-                                class="ms-1 me-1"><?= htmlspecialchars(fetch_user($pdo, $post['author_id'])['username'] ?? 'DELETED_USER') ?></strong>
-                            · <?= date('d.m.Y H:i', strtotime($post['created_at'])) ?>
+
+                    <!-- Votes, Comments, Author and Date Section -->
+                    <div class="d-flex justify-content-between text-muted small">
+                        <div class="d-flex">
+                            <p class="mb-0 me-2"><?= $voteCount . ($voteCount == 1 ? ' Vote' : ' Votes') ?>
+                            <p class="mb-0"><?= $commentCount . ($commentCount == 1 ? ' Kommentar' : ' Kommentare') ?>
+                        </div>
+
+                        <div>
+                            <?= 'Von <strong class="ms-1 me-1">' . htmlspecialchars($author['username'] ?? 'deleted_user') . '</strong>〢 ' . date('d.m.Y H:i', strtotime($post['created_at'])) ?>
                         </div>
 
                     </div>
                 </div>
-
             <?php endforeach; ?>
         </div>
     <?php endif; ?>
+
 </div>
 
 <?php include 'includes/footer.php'; ?>
