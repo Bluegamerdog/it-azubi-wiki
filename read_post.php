@@ -1,12 +1,12 @@
 <?php
 session_start();
 
-require_once 'functions/database.php';  // PDO-Verbindung + Reaktionsfunktionen
-require_once 'functions/utils.php';     // Falls du andere Hilfsfunktionen brauchst
+require_once 'functions/database.php';
+require_once 'functions/utils.php';
 
 // Prüfen ob Post-ID übergeben wurde
 if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
-    header('Location: admin_dashboard.php');
+    header('Location: index.php');
     exit();
 }
 
@@ -49,7 +49,6 @@ include 'includes/header.php';
     </div>
 
     <?php if ($user_id): ?>
-        <!-- Reaktionsbuttons -->
         <form method="post" class="mt-4">
             <button type="submit" name="reaction" value="upvote"
                 class="btn <?= $userReaction === 'upvote' ? 'btn-success' : 'btn-outline-success' ?>">
@@ -64,7 +63,7 @@ include 'includes/header.php';
         <p class="text-muted mt-3">🔐 Bitte <a href="login.php">einloggen</a>, um abzustimmen.</p>
     <?php endif; ?>
 
-    <a href="edit_post.php" class="btn btn-secondary mt-4">Zurück zur Übersicht</a>
+    <a href="index.php" class="btn btn-secondary mt-4">Zurück zur Übersicht</a>
 </div>
 
 <?php include 'includes/footer.php'; ?>

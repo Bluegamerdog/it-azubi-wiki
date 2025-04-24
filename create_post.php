@@ -3,7 +3,7 @@ session_start();
 require_once 'functions/database.php';   // PDO-Verbindung
 require_once 'functions/utils.php';      // check_admin
 
-if (!isset($_SESSION["username"]) || !isset($_SESSION["userid"])) {
+if (!isset($_SESSION['username']) || !isset($_SESSION['user_id'])) {
     header("Location: login.php");
     exit();
 }
@@ -29,7 +29,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     // Wenn keine Fehler aufgetreten sind, den Beitrag speichern
     if (empty($errors)) {
-        create_post($pdo, $_SESSION['userid'], $title, $content);
+        create_post($pdo, $_SESSION['user_id'], $title, $content);
 
         $success = true;
         header('Location: index.php');

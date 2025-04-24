@@ -2,7 +2,7 @@
 session_start();
 require_once "functions/database.php";
 
-if (isset($_SESSION['username']) && isset($_SESSION['userid'])) {
+if (isset($_SESSION['username']) && isset($_SESSION['user_id'])) {
     header("Location: index.php");
     exit(); // Already logged in
 }
@@ -19,7 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($user && isset($user['password']) && password_verify($password, $user['password'])) {
         // User successfully authenticated
         $_SESSION['username'] = $username;
-        $_SESSION['userid'] = $user['id'];
+        $_SESSION['user_id'] = $user['id'];
         session_write_close();
         header("Location: index.php");
         exit();
