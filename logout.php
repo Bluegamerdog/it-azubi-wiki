@@ -1,5 +1,6 @@
 <?php
 session_start();
+include 'includes/header.php';
 
 // Überprüfen, ob der Logout-Button gedrückt wurde
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['logout'])) {
@@ -14,7 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['logout'])) {
     exit;
 }
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['zurück'])) {
-header("Location: register.php"); //<--------------------------------------------------vorherige seite einfügen
+header("Location: register.php"); //<---------------------------------vorherige seite einfügen
 exit;
 }
 ?>
@@ -33,5 +34,8 @@ exit;
         <button type="submit" name="zurück">zurück</button>
 
     </form>
+    <?php
+    include 'includes/footer.php';
+    ?>
 </body>
 </html>

@@ -1,62 +1,67 @@
 <?php
 session_start();
+require_once "functions/database.php"; // oder functions/user.php, falls du dort die Funktion hast
+include 'includes/header.php';
 
-// Datenbankverbindung herstellen
-require_once "functions/database.php";
-
-// Variable für Fehlermeldungen initialisieren
 $message = "";
 
-// Überprüfen, ob das Formular gesendet wurde
 if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["sent"])) {
-    $benutzername = isset($_POST["benutzername"]) ? trim($_POST["benutzername"]) : "";
-    $passwort = isset($_POST["passwort_eingabe"]) ? trim($_POST["passwort_eingabe"]) : "";
-    $passwort_wiederholen = isset($_POST["passwort_wiederholung"]) ? trim($_POST["passwort_wiederholung"]) : "";
+    $username = trim($_POST["username"] ?? "");
+    $email = trim($_POST["email"] ?? "");
+    $password = trim($_POST["password_eingabe"] ?? "");
+    $password_wiederholen = trim($_POST["password_wiederholung"] ?? "");
 
-    // Validierung der Eingaben
-    if (empty($benutzername) || empty($passwort) || empty($passwort_wiederholen)) {
-        $message = "Bitte fülle alle Felder aus.";
-    } elseif (strlen($passwort) < 6) {
+
+
+
+
+    if (empty($username) || empty($email) || empty($password) || empty($password_wiederholen)) {
+    $message = "Bitte fülle alle Felder aus.";
+    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+    $message = "Bitte gib eine gültige E-Mail-Adresse ein.";
+    } elseif (strlen($password) < 6) {
         $message = "Das Passwort muss mindestens 6 Zeichen lang sein.";
-    } elseif (!preg_match('/[a-zA-Z]/', $passwort)) {
+    } elseif (!preg_match('/[a-zA-Z]/', $password)) {
         $message = "Das Passwort muss mindestens einen Buchstaben enthalten.";
-    } elseif (!preg_match('/[0-9]/', $passwort)) {
+    } elseif (!preg_match('/[0-9]/', $password)) {
         $message = "Das Passwort muss mindestens eine Ziffer enthalten.";
-    } elseif ($passwort !== $passwort_wiederholen) {
-        $message = "Die Passwörter stimmen nicht überein. Bitte geben Sie beide Passwörter erneut ein.";
+    } elseif ($password !== $password_wiederholen) {
+        $message = "Die Passwörter stimmen nicht überein.";
     } else {
-        // Überprüfen, ob der Benutzername bereits existiert
-        $stmt = $pdo->prepare("SELECT COUNT(*) FROM users WHERE benutzername = :benutzername");
-        $stmt->execute([':benutzername' => $benutzername]);
+       $stmt = $pdo->prepare("SELECT COUNT(*) FROM users WHERE username = :username OR email = :email");
+        $stmt->execute([':username' => $username, ':email' => $email]);
         if ($stmt->fetchColumn() > 0) {
-            $message = "Der Benutzername ist bereits vergeben. Bitte wählen Sie einen anderen.";
+        $message = "Benutzername oder E-Mail ist bereits vergeben.";
         } else {
-            // Daten in die Datenbank einfügen
-            $stmt = $pdo->prepare("INSERT INTO users (benutzername, passwort) VALUES (:benutzername, :passwort)");
-            $stmt->execute([
-                ":benutzername" => $benutzername,
-                ":passwort" => password_hash($passwort, PASSWORD_DEFAULT)
-            ]);
-            $message = "Registrierung erfolgreich! Sie können sich jetzt einloggen.";
+        if (create_user($pdo, $username, $email, $password)) {
+        $message = "Registrierung erfolgreich! Sie können sich jetzt einloggen.";
+        } else {
+        $message = "Fehler beim Erstellen des Accounts.";
         }
     }
+  }
 }
+
 ?>
 
 <h1>Registrierung</h1>
 <div class="container">
     <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
         <div class="mb-3">
-            <label for="benutzername_eingeben" class="form-label">Benutzername</label>
-            <input type="text" class="form-control" id="benutzername_eingeben" name="benutzername" placeholder="Benutzernamen eingeben" required>
+            <label for="username_eingeben" class="form-label">Benutzername</label>
+            <input type="text" class="form-control" id="username_eingeben" name="username" placeholder="username eingeben" required>
         </div>
         <div class="mb-3">
-            <label for="passwort_eingabe" class="form-label">Passwort</label>
-            <input type="password" class="form-control" id="passwort_eingabe" name="passwort_eingabe" placeholder="Neues Passwort eingeben" required>
+            <label for="password_eingabe" class="form-label">Passwort</label>
+            <input type="password" class="form-control" id="password_eingabe" name="password_eingabe" placeholder="Neues Password eingeben" required>
         </div>
         <div class="mb-3">
-            <label for="passwort_wiederholung" class="form-label">Passwort wiederholen</label>
-            <input type="password" class="form-control" id="passwort_wiederholung" name="passwort_wiederholung" placeholder="Passwort wiederholen" required>
+            <label for="password_wiederholung" class="form-label">Passwort wiederholen</label>
+            <input type="password" class="form-control" id="password_wiederholung" name="password_wiederholung" placeholder="Password wiederholen" required>
+        </div>
+        <div class="mb-3">
+            <label for="email" class="form-label">Email</label>
+            <input type="email" class="form-control" id="email" name="email" placeholder="email eingabe" required>
         </div>
         <button type="submit" class="btn btn-primary mb-3" name="sent">Registrieren</button>
     </form>
@@ -70,3 +75,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["sent"])) {
         </div>
     <?php endif; ?>
 </div>
+<?php
+include 'includes/footer.php';
+?>
