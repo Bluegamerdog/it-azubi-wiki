@@ -1,15 +1,21 @@
 const toggle = document.getElementById('darkModeToggle');
-const body = document.body;
+const html = document.documentElement;
 
-// Check for dark mode on load
+// Apply saved theme on load
 if (localStorage.getItem('darkMode') === 'enabled') {
-    body.classList.add('dark-mode');
+    html.setAttribute('data-bs-theme', 'dark');
+} else {
+    html.setAttribute('data-bs-theme', 'light');
 }
 
-// Toggle dark mode
+// Toggle theme on button click
 if (toggle) {
     toggle.addEventListener('click', () => {
-        body.classList.toggle('dark-mode');
-        localStorage.setItem('darkMode', body.classList.contains('dark-mode') ? 'enabled' : 'disabled');
+        const currentTheme = html.getAttribute('data-bs-theme');
+        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        html.setAttribute('data-bs-theme', newTheme);
+
+        localStorage.setItem('darkMode', newTheme === 'dark' ? 'enabled' : 'disabled');
     });
 }
+
