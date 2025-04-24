@@ -29,6 +29,28 @@
             color: #f0f0f0;
             border-color: #007bff;
         }
+
+        .post-card {
+            transition: all 0.2s ease;
+        }
+
+        .post-card:hover {
+            background-color: #f8f9fa;
+        }
+
+        .dark-mode .post-card:hover {
+            background-color: #1e1e1e;
+        }
+
+        .dark-mode .post-card {
+            background-color: #1a1a1a;
+            color: #e0e0e0;
+        }
+
+        .votes {
+            width: 40px;
+            flex-shrink: 0;
+        }
     </style>
 
 
@@ -46,39 +68,38 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav">
                     <li class="nav-item">
-                        <a href="index.php" class="nav-link active" aria-current="page">Home</a>
+                        <a href="index.php" class="nav-link active" aria-current="page">Beiträge</a>
                     </li>
                     <li class="nav-item">
-                        <a href="create_post.php" class="nav-link active">Neuer Beitrag</a>
+                        <a href="edit_post.php" class="nav-link">Bearbeiten</a>
                     </li>
-
                     <li class="nav-item">
-                        <a href="edit_post.php" class="nav-link active">Beiträge bearbeiten</a>
+                        <a href="delete_post.php" class="nav-link">Verwalten</a>
                     </li>
-
                     <li class="nav-item">
-                        <a href="delete_post.php" class="nav-link active">Beiträge Verwalten</a>
+                        <a href="bookmarks.php" class="nav-link">Lesezeichen</a>
                     </li>
 
                 </ul>
 
                 <div class="d-flex ms-auto align-items-center">
                     <span class="navbar-text me-3">
-                        <?= isset($_SESSION['admin']) ? htmlspecialchars($_SESSION['admin']) : 'Gast' ?>
+                        <?= isset($_SESSION['username']) ? htmlspecialchars($_SESSION['username']) : 'Gast' ?>
                     </span>
-                    <?php if (isset($_SESSION['admin'])): ?>
+                    <?php if (isset($_SESSION['username'])): ?>
                         <form action="logout.php" method="post" class="d-inline">
                             <button type="submit" name="logout" class="btn btn-outline-dark btn-sm">Logout</button>
                         </form>
                     <?php else: ?>
-                        <a href="login.php" class="btn btn-outline-primary btn-sm">Login</a>
+                        <a href="login.php" class="btn btn-outline-primary btn-sm">Log in</a>
+                        <a href="register.php" class="btn btn-outline-primary btn-sm ms-1">Sign up</a>
                     <?php endif; ?>
                     <button id="darkModeToggle" class="btn btn-sm btn-secondary ms-2">🌙</button>
                 </div>
-
             </div>
         </div>
     </nav>
+
 
 
     <div class="container">
