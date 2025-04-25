@@ -22,25 +22,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['zurück'])) {
 include 'includes/header.php';
 ?>
 
-<!DOCTYPE html>
-<html lang="en">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Logout</title>
-</head>
+<div class="container mt-5 col-md-6 text-center card shadow card-body">
+    <div class="justify-content-center">
+        <h1 class="mb-4">Möchten Sie sich wirklich ausloggen?</h1>
+        <form method="post">
+            <button type="submit" name="logout" class="btn btn-danger me-2">Ausloggen</button>
+            <button type="submit" name="zurück" class="btn btn-secondary">Zurück</button>
+        </form>
+    </div>
+</div>
 
-<body>
-    <h1>Wollen sie sich wirklich Ausloggen?</h1>
-    <form method="post">
-        <button type="submit" name="logout">Ausloggen</button>
-        <button type="submit" name="zurück">zurück</button>
-
-    </form>
-    <?php
-    include 'includes/footer.php';
-    ?>
-</body>
-
-</html>
+<?php
+include 'includes/footer.php';
+?>

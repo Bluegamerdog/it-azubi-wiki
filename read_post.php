@@ -58,8 +58,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $user_id) {
 }
 
 // Reaktionen abrufen
-$reactions = get_reaction_counts($pdo, $post_id);
-$userReaction = $user_id ? get_user_reaction($pdo, $post_id, $user_id) : null;
+$reactions = fetch_reaction_counts($pdo, $post_id);
+$userReaction = $user_id ? fetch_user_reaction($pdo, $post_id, $user_id) : null;
 
 // Kommentare laden
 $stmt = $pdo->prepare("
