@@ -23,7 +23,7 @@ include 'includes/header.php';
 ?>
 
 
-<div class="container mt-5 col-md-6 text-center card shadow card-body">
+<div class="container mt-4 col-md-6 text-center card shadow card-body">
     <div class="justify-content-center">
         <h1 class="mb-4">Möchten Sie sich wirklich ausloggen?</h1>
         <form method="post">

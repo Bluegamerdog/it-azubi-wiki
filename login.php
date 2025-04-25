@@ -34,7 +34,7 @@ include 'includes/header.php';
 ?>
 
 
-<div class="container mt-5">
+<div class="container mt-4">
     <div class="row justify-content-center">
         <div class="col-md-6 col-lg-4">
             <h1 class="text-center mb-4">Login</h1>
