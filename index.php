@@ -38,9 +38,13 @@ if ($days_old != 'all') {
 
 <div class="container mt-5">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1><class="fw-bold"><?= $title ?></h1>
-        <a href="create_post.php" class="btn btn-primary">Create Post</a>
+        <h1 class="fw-bold"><?= $title ?></h1>
+        <div>
+            <a href="create_post.php" class="btn btn-primary me-2">Create Post</a>
+        </div>
     </div>
+
+
 
     <!-- Filters Section -->
     <form method="GET" class="mb-5">
@@ -87,7 +91,7 @@ if ($days_old != 'all') {
                 $votes = fetch_reaction_counts($pdo, $post['id']);
                 $voteCount = ($votes['upvote'] ?? 0) + ($votes['downvote'] ?? 0);
                 $author = isset($post['author_id']) && is_numeric($post['author_id']) ? fetch_user($pdo, $post['author_id']) : null;
-                ?>
+            ?>
                 <div class="post-card list-group-item list-group-item-action mb-3 rounded shadow-sm border-2 p-3">
 
                     <!-- Post Title and Content -->
