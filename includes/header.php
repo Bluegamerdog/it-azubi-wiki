@@ -1,3 +1,8 @@
+<?php
+require_once "functions/database.php";
+require_once "functions/utils.php";
+?>
+
 <!DOCTYPE html>
 <html lang="de" data-bs-theme="light">
 
@@ -160,21 +165,24 @@
                 </ul>
             </div>
 
-            <!-- Bookmark Header -->
-            <div class="mb-2 border-top border-body-subtle pt-3">
-                <h5 class="text-body mb-2">Lesezeichen</h5>
-            </div>
+            <?php if (isset($_SESSION['user_id'])): ?>
+                <!-- Bookmark Header -->
+                <div class="mb-2 border-top border-body-subtle pt-3">
+                    <h5 class="text-body mb-2">Lesezeichen</h5>
+                </div>
 
-            <!-- Bookmark List -->
-            <div class="bookmark-list flex-grow-1 overflow-auto mb-3">
-                <ul class="nav flex-column">
-                    <?php for ($i = 1; $i <= 20; $i++): ?>
-                        <li class="nav-item border-bottom border-body-subtle">
-                            <a href="#" class="nav-link text-body py-1">Post <?= $i ?></a>
-                        </li>
-                    <?php endfor; ?>
-                </ul>
-            </div>
+                <!-- Bookmark List -->
+                <div class="bookmark-list flex-grow-1 overflow-auto mb-3">
+                    <ul class="nav flex-column">
+                        <?php foreach (fetch_user_bookmarks($pdo, $_SESSION['user_id']) as $post): ?>
+                            <li class="nav-item border-bottom border-body-subtle">
+                                <a href=<?= "read_post.php?id=" . $post['id'] ?> class="nav-link text-body py-1">Post
+                                    <?= nl2br(htmlspecialchars(substr($post['content'], 0, 15))) . (strlen($post['content']) > 15 ? '...' : '') ?></a>
+                            </li>
+                        <?php endforeach; ?>
+                    </ul>
+                </div>
+            <?php endif ?>
 
             <!-- Dark Mode Toggle -->
             <hr class="border-body-subtle my-3">

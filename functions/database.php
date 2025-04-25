@@ -177,6 +177,43 @@ function update_post(PDO $pdo, int|string $post_id, string $title, string $conte
     ]);
 }
 
+// Bookmark a post
+function bookmark_post(PDO $pdo, int $user_id, int $post_id): bool
+{
+    if (is_post_bookmarked($pdo, $user_id, $post_id)) {
+        return true;
+    }
+
+    $stmt = $pdo->prepare("INSERT INTO user_bookmarks (user_id, post_id) VALUES (:user_id, :post_id)");
+    return $stmt->execute(['user_id' => $user_id, 'post_id' => $post_id]);
+}
+
+// Unbookmark a post
+function unbookmark_post(PDO $pdo, int $user_id, int $post_id): bool
+{
+    $stmt = $pdo->prepare("DELETE FROM user_bookmarks WHERE user_id = :user_id AND post_id = :post_id");
+    return $stmt->execute(['user_id' => $user_id, 'post_id' => $post_id]);
+}
+
+// Fetch all bookmarks for a user
+function fetch_user_bookmarks(PDO $pdo, int $user_id): array
+{
+    $stmt = $pdo->prepare("SELECT posts.* FROM posts
+                           JOIN user_bookmarks ON posts.id = user_bookmarks.post_id
+                           WHERE user_bookmarks.user_id = :user_id");
+    $stmt->execute(['user_id' => $user_id]);
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
+// Check if a user has bookmarked a post
+function is_post_bookmarked(PDO $pdo, int $user_id, int $post_id): bool
+{
+    $stmt = $pdo->prepare("SELECT COUNT(*) FROM user_bookmarks WHERE user_id = :user_id AND post_id = :post_id");
+    $stmt->execute(['user_id' => $user_id, 'post_id' => $post_id]);
+    return $stmt->fetchColumn() > 0;
+}
+
+
 // == COMMENTS ==
 function fetch_all_comments(PDO $pdo): array
 {

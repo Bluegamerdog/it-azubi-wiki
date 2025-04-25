@@ -1,5 +1,4 @@
 <?php
-session_start();
 require_once "functions/database.php";
 require_once 'functions/utils.php';
 
@@ -16,17 +15,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($action === 'promote_moderator' && isset($_POST['user_id'])) {
         echo 'PROMOTED';
         update_user($pdo, $_POST['user_id'], ['role' => 'moderator']);
-        header('Location: admin.php');
+        header("Location: " . $_SERVER['HTTP_REFERER']);
         exit;
     } elseif ($action === 'demote_moderator' && isset($_POST['user_id'])) {
         echo 'DEMOTED';
         update_user($pdo, $_POST['user_id'], ['role' => 'user']);
-        header('Location: admin.php');
+        header("Location: " . $_SERVER['HTTP_REFERER']);
         exit;
     } elseif ($action === 'delete_user' && isset($_POST['user_id'])) {
         echo 'DELETED';
         delete_user($pdo, $_POST['user_id']);
-        header('Location: admin.php');
+        header("Location: " . $_SERVER['HTTP_REFERER']);
         exit;
     }
 } else {
