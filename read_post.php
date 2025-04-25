@@ -64,6 +64,14 @@ include 'includes/header.php';
     <?php endif; ?>
 
     <a href="index.php" class="btn btn-secondary mt-4">Zurück zur Übersicht</a>
+    <br></br>
+
+    <?php if ($user_id && $post_id): ?>
+        <form method="post" action="add_bookmarks.php" style="display:inline;">
+            <input type="hidden" name="post_id" value="<?= htmlspecialchars($post_id) ?>">
+            <button type="submit">Lesezeichen hizufügen</button>
+        </form>
+    <?php endif; ?>
 </div>
 
 <?php include 'includes/footer.php'; ?>
