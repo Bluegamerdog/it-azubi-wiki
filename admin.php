@@ -31,20 +31,29 @@ include 'includes/header.php';
                             <td><?= htmlspecialchars($user['username']) ?></td>
                             <td><?= htmlspecialchars($user['role']) ?></td>
                             <td>
-                                <?php if ($user['role'] !== 'admin'): ?>
-                                    <form method="post" action="admin_actions.php" class="d-inline">
+                                <?php if ($user['role'] == 'moderator'): ?>
+                                    <form method="post" action="actions_admin.php" class="d-inline">
                                         <input type="hidden" name="user_id" value="<?= $user['id'] ?>">
-                                        <button type="submit" name="promote_moderator" class="btn btn-sm btn-success">Zum
+                                        <button type="submit" name="action" value="demote_moderator"
+                                            class="btn btn-sm btn-success">Zum
+                                            User machen</button>
+                                    </form>
+                                <?php endif ?>
+                                <?php if ($user['role'] == 'user'): ?>
+                                    <form method="post" action="actions_admin.php" class="d-inline">
+                                        <input type="hidden" name="user_id" value="<?= $user['id'] ?>">
+                                        <button type="submit" name="action" value="promote_moderator"
+                                            class="btn btn-sm btn-success">Zum
                                             Moderator machen</button>
                                     </form>
-                                    <form method="post" action="admin_actions.php" class="d-inline">
+                                <?php endif ?>
+                                <?php if ($user['role'] !== 'admin'): ?>
+                                    <form method="post" action="actions_admin.php" class="d-inline">
                                         <input type="hidden" name="user_id" value="<?= $user['id'] ?>">
-                                        <button type="submit" name="delete_user" class="btn btn-sm btn-danger"
+                                        <button type="submit" name="action" value="delete_user" class="btn btn-sm btn-danger"
                                             onclick="return confirm('Benutzer wirklich löschen?')">Löschen</button>
                                     </form>
-                                <?php else: ?>
-                                    <span class="text-muted">Admin</span>
-                                <?php endif; ?>
+                                <?php endif ?>
                             </td>
                         </tr>
                     <?php endforeach; ?>

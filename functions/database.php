@@ -79,16 +79,20 @@ function update_user(PDO $pdo, int|string $user_id, $data): bool
             $value = password_hash($value, PASSWORD_DEFAULT);
         }
 
-        $fields[] = "$key = :$key";
-        $params[$key] = $value;
+        if ($key !== 'id') {
+            $fields[] = "$key = :$key";
+            $params[$key] = $value;
+        }
     }
 
-    if (empty($fields))
+    if (empty($fields)) {
         return false;
+    }
 
     $stmt = $pdo->prepare("UPDATE users SET " . implode(', ', $fields) . " WHERE id = :user_id");
     return $stmt->execute($params);
 }
+
 
 // == POSTS ==
 

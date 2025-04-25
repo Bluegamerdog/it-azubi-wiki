@@ -18,11 +18,17 @@ if (!$post) {
 }
 
 $user_id = $_SESSION['user_id'] ?? null;
+$user_role = $_SESSION['role'] ?? null; // Get the user's role from session
 
 // Reaktion verarbeiten (nur wenn User eingeloggt ist)
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && $user_id) {
     if (isset($_POST['reaction']) && in_array($_POST['reaction'], ['upvote', 'downvote'])) {
         set_reaction($pdo, $post_id, $user_id, $_POST['reaction']);
+    }
+    if (isset($_POST['delete_post']) && ($user_role === 'admin' || $user_role === 'moderator')) {
+        delete_post($pdo, $post_id);
+        header('Location: index.php');
+        exit();
     }
     header("Location: read_post.php?id=$post_id");
     exit();
@@ -43,7 +49,6 @@ include 'includes/header.php';
         <p><?= nl2br(htmlspecialchars($post["content"])) ?></p>
     </div>
 
-
     <form action="read_post.php?id=<?= $post_id ?>" method="POST">
         <div class="mt-4">
             <button class="btn <?= $userReaction === 'upvote' ? 'btn-success' : 'btn-outline-success' ?>" type="submit"
@@ -57,6 +62,13 @@ include 'includes/header.php';
         </div>
     </form>
 
+    <?php if ($user_role === 'admin' || $user_role === 'moderator'): ?>
+        <!-- Show delete button for admins and moderators -->
+        <form action="read_post.php?id=<?= $post_id ?>" method="POST"
+            onsubmit="return confirm('Are you sure you want to delete this post?');">
+            <button type="submit" class="btn btn-danger mt-4" name="delete_post" value="1">Delete Post</button>
+        </form>
+    <?php endif; ?>
 
     <a href="index.php" class="btn btn-secondary mt-4">Zurück zur Übersicht</a>
 </div>
