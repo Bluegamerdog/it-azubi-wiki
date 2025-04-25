@@ -5,8 +5,8 @@ require_once 'functions/utils.php';
 include 'includes/header.php';
 
 // Get the filters from the GET request
-$sorted_by = isset($_GET['sorted_by']) ? $_GET['sorted_by'] : 'newest';
-$days_old = isset($_GET['days_old']) ? $_GET['days_old'] : 'all';
+$sorted_by = $_GET['sorted_by'] ?? 'newest';
+$days_old = $_GET['days_old'] ?? 'all';
 
 // Fetch the posts based on filters
 $posts = fetch_all_posts($pdo, $sorted_by, $days_old);
