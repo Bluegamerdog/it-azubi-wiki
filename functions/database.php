@@ -24,21 +24,21 @@ try {
 
 function fetch_all_users(PDO $pdo): array
 {
-    $stmt = $pdo->prepare("SELECT id, role, username, email, password FROM users");
+    $stmt = $pdo->prepare("SELECT * FROM users");
     $stmt->execute();
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
 function fetch_user(PDO $pdo, int|string $user_id)
 {
-    $stmt = $pdo->prepare("SELECT id, role, username, email, profile_image_path FROM users WHERE id = :user_id");
+    $stmt = $pdo->prepare("SELECT * FROM users WHERE id = :user_id");
     $stmt->execute(['user_id' => $user_id]);
     return $stmt->fetch(PDO::FETCH_ASSOC);
 }
 
 function fetch_user_by_username(PDO $pdo, string $username)
 {
-    $stmt = $pdo->prepare("SELECT id, role, username, email, profile_image_path, password FROM users WHERE username = :username");
+    $stmt = $pdo->prepare("SELECT * FROM users WHERE username = :username");
     $stmt->execute(['username' => $username]);
     return $stmt->fetch(PDO::FETCH_ASSOC);
 }
