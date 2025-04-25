@@ -110,14 +110,14 @@ function fetch_all_posts(PDO $pdo, $sorted_by = 'newest', $days_old = 'all'): ar
             break;
         case 'most_activity':
             // You can modify this query to use actual "activity" data (e.g., comment count, vote count)
-            $orderBy = "ORDER BY (SELECT COUNT(*) FROM comments WHERE post_id = posts.id) DESC";
+            $orderBy = "ORDER BY (SELECT COUNT(*) FROM post_comments WHERE post_id = posts.id) DESC";
             break;
         case 'trending':
             // Trending can be based on a combination of factors such as votes, comments, etc.
-            $orderBy = "ORDER BY (SELECT COUNT(*) FROM comments WHERE post_id = posts.id) DESC, created_at DESC";
+            $orderBy = "ORDER BY (SELECT COUNT(*) FROM post_comments WHERE post_id = posts.id) DESC, created_at DESC";
             break;
         case 'no_comments':
-            $whereClause .= ($whereClause ? " AND" : " WHERE") . " (SELECT COUNT(*) FROM comments WHERE post_id = posts.id) = 0";
+            $whereClause .= ($whereClause ? " AND" : " WHERE") . " (SELECT COUNT(*) FROM post_comments WHERE post_id = posts.id) = 0";
             $orderBy = "ORDER BY created_at DESC";
             break;
         case 'newest':
@@ -175,41 +175,41 @@ function update_post(PDO $pdo, int|string $post_id, string $title, string $conte
 // == COMMENTS ==
 function fetch_all_comments(PDO $pdo): array
 {
-    $stmt = $pdo->prepare("SELECT * FROM comments");
+    $stmt = $pdo->prepare("SELECT * FROM post_comments");
     $stmt->execute();
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
 function fetch_comments_by_post(PDO $pdo, int|string $post_id): array
 {
-    $stmt = $pdo->prepare("SELECT * FROM comments WHERE post_id = :post_id");
+    $stmt = $pdo->prepare("SELECT * FROM post_comments WHERE post_id = :post_id");
     $stmt->execute(['post_id' => $post_id]);
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
 function fetch_comments_by_user(PDO $pdo, int|string $author_id): array
 {
-    $stmt = $pdo->prepare("SELECT * FROM comments WHERE author_id = :author_id");
+    $stmt = $pdo->prepare("SELECT * FROM post_comments WHERE author_id = :author_id");
     $stmt->execute(['author_id' => $author_id]);
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
 function fetch_comment(PDO $pdo, int|string $comment_id)
 {
-    $stmt = $pdo->prepare("SELECT * FROM comments WHERE id = :comment_id");
+    $stmt = $pdo->prepare("SELECT * FROM post_comments WHERE id = :comment_id");
     $stmt->execute(['comment_id' => $comment_id]);
     return $stmt->fetch(PDO::FETCH_ASSOC);
 }
 
 function create_comment(PDO $pdo, int|string $post_id, int|string $author_id, string $content): bool
 {
-    $stmt = $pdo->prepare("INSERT INTO comments (post_id, author_id, content) VALUES (:post_id, :author_id, :content)");
+    $stmt = $pdo->prepare("INSERT INTO post_comments (post_id, author_id, content) VALUES (:post_id, :author_id, :content)");
     return $stmt->execute(['post_id' => $post_id, 'author_id' => $author_id, 'content' => $content]);
 }
 
 function delete_comment(PDO $pdo, int|string $comment_id): bool
 {
-    $stmt = $pdo->prepare("DELETE FROM comments WHERE id = :comment_id");
+    $stmt = $pdo->prepare("DELETE FROM post_comments WHERE id = :comment_id");
     return $stmt->execute(['comment_id' => $comment_id]);
 }
 
