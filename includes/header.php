@@ -150,6 +150,11 @@
                 <li class="nav-item">
                     <a href="bookmarks.php" class="nav-link">Lesezeichen</a>
                 </li>
+                <?php if (isset($_SESSION['role']) && $_SESSION['role'] == 'admin'): ?>
+                    <li class="nav-item">
+                        <a href="admin.php" class="nav-link">Admin Panel</a>
+                    </li>
+                <?php endif; ?>
             </ul>
         </nav>
 
