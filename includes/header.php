@@ -111,14 +111,17 @@
             </form>
             <div class="d-flex ms-auto align-items-center">
                 <?php if (!isset($_SESSION['username'])): ?>
-                    <span class="navbar-text me-1">Gast</span>
-                    <a href="login.php" class="btn btn-outline-primary me-2">Login</a>
-                    <a href="register.php" class="btn btn-primary">Sign Up</a>
+                    <span class="navbar-text">Gast</span>
+                    <a href="login.php" class="btn btn-outline-primary">Log in</a>
+                    <a href="register.php" class="btn btn-primary">Sign up</a>
                 <?php else: ?>
                     <div class="dropdown d-flex align-items-center">
-                        <img src=<?php echo $_SESSION['profilbild'] ?? 'uploads/user_avatars/default.png'; ?> alt="Profilbild" class="rounded-circle me-2" style="width: 35px; height: 35px; object-fit: cover;">
-                        <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="userMenu" data-bs-toggle="dropdown" aria-expanded="false">
-                            <?= htmlspecialchars($_SESSION['username']) ?>
+                        <button class="btn btn-outline-secondary d-flex align-items-center gap-2" type="button"
+                            id="userMenu" data-bs-toggle="dropdown" aria-expanded="false">
+                            <span><?= htmlspecialchars($_SESSION['username']) ?></span>
+                            <img src="<?= $_SESSION['profilbild'] ?? 'uploads/user_avatars/default.png'; ?>"
+                                alt="Profilbild" class="rounded-circle"
+                                style="width: 32px; height: 32px; object-fit: cover;">
                         </button>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenu">
                             <li><a class="dropdown-item" href="profile.php">Zum Profil</a></li>
@@ -128,36 +131,57 @@
                             <li><a class="dropdown-item" href="logout.php">Logout</a></li>
                         </ul>
                     </div>
+
                 <?php endif; ?>
-                <button id="darkModeToggle" class="btn btn-sm btn-secondary ms-2">🌙</button>
             </div>
         </div>
     </nav>
 
     <div class="d-flex">
         <!-- Sidebar -->
-        <nav class="sidebar text-white p-3">
-            <ul class="nav flex-column">
-                <li class="nav-item">
-                    <a href="index.php" class="nav-link active">Beiträge</a>
-                </li>
-                <li class="nav-item">
-                    <a href="edit_post.php" class="nav-link">Bearbeiten</a>
-                </li>
-                <li class="nav-item">
-                    <a href="delete_post.php" class="nav-link">Verwalten</a>
-                </li>
-                <li class="nav-item">
-                    <a href="bookmarks.php" class="nav-link">Lesezeichen</a>
-                </li>
-                <?php if (isset($_SESSION['role']) && $_SESSION['role'] == 'admin'): ?>
-                    <li class="nav-item">
-                        <a href="admin.php" class="nav-link">Admin Panel</a>
+        <nav class="sidebar p-3 d-flex flex-column border-end border-body-subtle" style="min-width: 250px;">
+            <!-- Main Nav Links -->
+            <div class="mb-3">
+                <ul class="nav flex-column">
+                    <li class="nav-item border-bottom border-body-subtle">
+                        <a href="index.php" class="nav-link text-body py-2">Beiträge</a>
                     </li>
-                <?php endif; ?>
-            </ul>
+                    <li class="nav-item border-bottom border-body-subtle">
+                        <a href="profiles.php" class="nav-link text-body py-2">Benutzer</a>
+                    </li>
+                    <!-- <li class="nav-item border-bottom border-body-subtle">
+                        <a href="delete_post.php" class="nav-link text-body py-2">Verwalten</a>
+                    </li> -->
+                    <?php if (isset($_SESSION['role']) && $_SESSION['role'] == 'admin'): ?>
+                        <li class="nav-item border-bottom border-body-subtle">
+                            <a href="admin.php" class="nav-link text-body py-2">Admin Panel</a>
+                        </li>
+                    <?php endif; ?>
+                </ul>
+            </div>
+
+            <!-- Bookmark Header -->
+            <div class="mb-2 border-top border-body-subtle pt-3">
+                <h5 class="text-body mb-2">Lesezeichen</h5>
+            </div>
+
+            <!-- Bookmark List -->
+            <div class="bookmark-list flex-grow-1 overflow-auto mb-3">
+                <ul class="nav flex-column">
+                    <?php for ($i = 1; $i <= 20; $i++): ?>
+                        <li class="nav-item border-bottom border-body-subtle">
+                            <a href="#" class="nav-link text-body py-2">Post <?= $i ?></a>
+                        </li>
+                    <?php endfor; ?>
+                </ul>
+            </div>
+
+            <!-- Dark Mode Toggle -->
+            <hr class="border-body-subtle my-3">
+            <button id="darkModeToggle" class="btn btn-sm btn-secondary mt-auto">🌙</button>
         </nav>
 
-        <!-- Main Content Area -->
-        <main class="flex-grow-1">
-            <div class="container">
+
+
+        <main class="main-content flex-grow-1">
+            <div class="container mt-4">
