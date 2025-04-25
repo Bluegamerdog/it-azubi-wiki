@@ -1,4 +1,3 @@
-const toggle = document.getElementById('darkModeToggle');
 const html = document.documentElement;
 
 // Apply saved theme on load
@@ -9,6 +8,8 @@ if (localStorage.getItem('darkMode') === 'enabled') {
 }
 
 // Toggle theme on button click
+
+const toggle = document.getElementById('darkModeToggle');
 if (toggle) {
     toggle.addEventListener('click', () => {
         const currentTheme = html.getAttribute('data-bs-theme');
@@ -18,4 +19,3 @@ if (toggle) {
         localStorage.setItem('darkMode', newTheme === 'dark' ? 'enabled' : 'disabled');
     });
 }
-

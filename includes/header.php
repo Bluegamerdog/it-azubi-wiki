@@ -4,7 +4,7 @@ require_once "functions/utils.php";
 ?>
 
 <!DOCTYPE html>
-<html lang="de" data-bs-theme="light">
+<html lang="de" data-bs-theme="dark">
 
 <head>
     <meta charset="UTF-8">
