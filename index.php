@@ -38,9 +38,13 @@ if ($days_old != 'all') {
 
 <div class="container mt-5">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1><class="fw-bold"><?= $title ?></h1>
-        <a href="create_post.php" class="btn btn-primary">Create Post</a>
+        <h1 class="fw-bold"><?= $title ?></h1>
+        <div>
+            <a href="create_post.php" class="btn btn-primary me-2">Create Post</a>
+        </div>
     </div>
+
+
 
     <!-- Filters Section -->
     <form method="GET" class="mb-5">
@@ -83,11 +87,11 @@ if ($days_old != 'all') {
         <div class="list-group">
             <?php foreach ($posts as $post):
                 $comments = fetch_comments_by_post($pdo, $post['id']);
-                $commentCount = $comments ? count($comments) : 0;
-                $votes = [];
-                $voteCount = $votes ? count($votes) : 0;
-                $author = $post['author_id'] ? fetch_user($pdo, $post['author_id']) : null;
-                ?>
+                $commentCount = is_array($comments) ? count($comments) : 0;
+                $votes = fetch_reaction_counts($pdo, $post['id']);
+                $voteCount = ($votes['upvote'] ?? 0) + ($votes['downvote'] ?? 0);
+                $author = isset($post['author_id']) && is_numeric($post['author_id']) ? fetch_user($pdo, $post['author_id']) : null;
+            ?>
                 <div class="post-card list-group-item list-group-item-action mb-3 rounded shadow-sm border-2 p-3">
 
                     <!-- Post Title and Content -->
@@ -110,7 +114,7 @@ if ($days_old != 'all') {
                         </div>
 
                         <div>
-                            <?= 'Von <strong class="ms-1 me-1">' . htmlspecialchars($author['username'] ?? 'deleted_user') . '</strong>〢 ' . date('d.m.Y H:i', strtotime($post['created_at'])) ?>
+                            <?= 'Von <strong class="ms-1 me-1">' . htmlspecialchars($author['username'] ?? 'deleted_user') . '</strong>〢 ' . time_ago($post['created_at']) ?>
                         </div>
 
                     </div>

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 24, 2025 at 10:33 AM
+-- Generation Time: Apr 25, 2025 at 10:24 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -24,45 +24,48 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- Table structure for table `comments`
---
-
-CREATE TABLE `comments` (
-  `id` int(11) NOT NULL,
-  `post_id` int(11) NOT NULL,
-  `author_id` int(11) NOT NULL,
-  `content` text NOT NULL,
-  `created_at` datetime NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `comments`
---
-
-INSERT INTO `comments` (`id`, `post_id`, `author_id`, `content`, `created_at`) VALUES
-(1, 1, 1, 'Test Comment', '2025-04-23 09:32:32');
-
--- --------------------------------------------------------
-
---
 -- Table structure for table `posts`
 --
 
 CREATE TABLE `posts` (
   `id` int(11) NOT NULL,
-  `author_id` int(11) NOT NULL,
+  `author_id` int(11) DEFAULT NULL,
   `title` varchar(150) NOT NULL,
   `content` text NOT NULL,
   `created_at` datetime NOT NULL DEFAULT current_timestamp(),
-  `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+  `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `is_wiki_entry` tinyint(1) NOT NULL DEFAULT 0,
+  `wiki_category_id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `posts`
 --
 
-INSERT INTO `posts` (`id`, `author_id`, `title`, `content`, `created_at`, `updated_at`) VALUES
-(1, 1, 'Test | Title Here', 'Test - Content Here', '2025-04-23 09:27:45', '2025-04-23 09:27:45');
+INSERT INTO `posts` (`id`, `author_id`, `title`, `content`, `created_at`, `updated_at`, `is_wiki_entry`, `wiki_category_id`) VALUES
+(1, 1, 'Root User Test Post | Title Here', 'Root User Test Post - Content Here', '2025-04-23 09:27:45', '2025-04-25 10:23:31', 0, NULL),
+(2, NULL, 'Deleted User Test Post', 'Deleted User Test Post Deleted User Test Post Deleted User Test Post Deleted User Test Post Deleted User Test Post', '2025-04-25 09:04:07', '2025-04-25 10:23:04', 0, NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `post_comments`
+--
+
+CREATE TABLE `post_comments` (
+  `id` int(11) NOT NULL,
+  `post_id` int(11) NOT NULL,
+  `author_id` int(11) DEFAULT NULL,
+  `content` text NOT NULL,
+  `created_at` datetime NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `post_comments`
+--
+
+INSERT INTO `post_comments` (`id`, `post_id`, `author_id`, `content`, `created_at`) VALUES
+(1, 1, 1, 'Test Comment', '2025-04-23 09:32:32');
 
 -- --------------------------------------------------------
 
@@ -77,6 +80,13 @@ CREATE TABLE `post_reactions` (
   `reaction_type` enum('upvote','downvote') NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `post_reactions`
+--
+
+INSERT INTO `post_reactions` (`id`, `post_id`, `user_id`, `reaction_type`) VALUES
+(1, 1, 1, 'upvote');
+
 -- --------------------------------------------------------
 
 --
@@ -88,42 +98,84 @@ CREATE TABLE `users` (
   `username` varchar(20) NOT NULL,
   `email` varchar(100) NOT NULL,
   `password` varchar(255) NOT NULL,
-  `created_at` datetime NOT NULL DEFAULT current_timestamp()
+  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
+  `profile_image_path` varchar(255) NOT NULL DEFAULT 'uploads/user_avatars/default.png'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`id`, `username`, `email`, `password`, `created_at`) VALUES
-(1, 'admin', 'admin@gmail.com', '$2y$10$3FTO3yNoQbRLVXZ1N/Xq5OQHg69SeADl8erjTovRPTjcZxDLz19t6', '2025-04-23 09:26:16');
+INSERT INTO `users` (`id`, `username`, `email`, `password`, `created_at`, `profile_image_path`) VALUES
+(1, 'root', 'root@gmail.com', '$2y$10$.uceBXGKRuRWdgaSCxd6qedlgs70K/ebFHGaJjCUkPZCMLZGRPwei', '2025-04-23 09:26:16', 'assets/profile_images/default.png');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `user_bookmarks`
+--
+
+CREATE TABLE `user_bookmarks` (
+  `id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `post_id` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `user_bookmarks`
+--
+
+INSERT INTO `user_bookmarks` (`id`, `user_id`, `post_id`) VALUES
+(1, 1, 1);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `wiki_categories`
+--
+
+CREATE TABLE `wiki_categories` (
+  `id` int(11) NOT NULL,
+  `name` varchar(150) NOT NULL,
+  `description` text DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `wiki_categories`
+--
+
+INSERT INTO `wiki_categories` (`id`, `name`, `description`) VALUES
+(1, 'Netzwerk', 'Grundlagen zu Netzwerktechnologien'),
+(3, 'Programmieren', 'Tipps & Tricks rund ums Coden'),
+(4, 'Betriebssysteme', 'Infos zu Linux, Windows & Co.');
 
 --
 -- Indexes for dumped tables
 --
 
 --
--- Indexes for table `comments`
---
-ALTER TABLE `comments`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `comments-posts` (`post_id`),
-  ADD KEY `author-users` (`author_id`);
-
---
 -- Indexes for table `posts`
 --
 ALTER TABLE `posts`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `author_posts-users` (`author_id`);
+  ADD KEY `fk_posts_author_id` (`author_id`),
+  ADD KEY `fk_posts_wiki_category_id` (`wiki_category_id`);
+
+--
+-- Indexes for table `post_comments`
+--
+ALTER TABLE `post_comments`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `fk_comments_post_id` (`post_id`),
+  ADD KEY `fk_comments_author_id` (`author_id`);
 
 --
 -- Indexes for table `post_reactions`
 --
 ALTER TABLE `post_reactions`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `reaction-user` (`user_id`),
-  ADD KEY `reaction-post` (`post_id`);
+  ADD KEY `fk_post_reactions_post_id` (`post_id`),
+  ADD KEY `fk_post_reactions_user_id` (`user_id`);
 
 --
 -- Indexes for table `users`
@@ -134,56 +186,90 @@ ALTER TABLE `users`
   ADD UNIQUE KEY `email` (`email`);
 
 --
--- AUTO_INCREMENT for dumped tables
+-- Indexes for table `user_bookmarks`
 --
+ALTER TABLE `user_bookmarks`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `fk_user_bookmarks_post_id` (`post_id`),
+  ADD KEY `fk_user_bookmarks_user_id` (`user_id`);
 
 --
--- AUTO_INCREMENT for table `comments`
+-- Indexes for table `wiki_categories`
 --
-ALTER TABLE `comments`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+ALTER TABLE `wiki_categories`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- AUTO_INCREMENT for dumped tables
+--
 
 --
 -- AUTO_INCREMENT for table `posts`
 --
 ALTER TABLE `posts`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT for table `post_comments`
+--
+ALTER TABLE `post_comments`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `post_reactions`
 --
 ALTER TABLE `post_reactions`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT for table `user_bookmarks`
+--
+ALTER TABLE `user_bookmarks`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT for table `wiki_categories`
+--
+ALTER TABLE `wiki_categories`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- Constraints for dumped tables
 --
 
 --
--- Constraints for table `comments`
---
-ALTER TABLE `comments`
-  ADD CONSTRAINT `author-users` FOREIGN KEY (`author_id`) REFERENCES `users` (`id`),
-  ADD CONSTRAINT `comments-posts` FOREIGN KEY (`post_id`) REFERENCES `posts` (`id`) ON DELETE CASCADE;
-
---
 -- Constraints for table `posts`
 --
 ALTER TABLE `posts`
-  ADD CONSTRAINT `author_posts-users` FOREIGN KEY (`author_id`) REFERENCES `users` (`id`) ON DELETE NO ACTION;
+  ADD CONSTRAINT `fk_posts_author_id` FOREIGN KEY (`author_id`) REFERENCES `users` (`id`) ON DELETE SET NULL,
+  ADD CONSTRAINT `fk_posts_wiki_category_id` FOREIGN KEY (`wiki_category_id`) REFERENCES `wiki_categories` (`id`) ON DELETE SET NULL;
+
+--
+-- Constraints for table `post_comments`
+--
+ALTER TABLE `post_comments`
+  ADD CONSTRAINT `fk_comments_author_id` FOREIGN KEY (`author_id`) REFERENCES `users` (`id`) ON DELETE SET NULL,
+  ADD CONSTRAINT `fk_comments_post_id` FOREIGN KEY (`post_id`) REFERENCES `posts` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `post_reactions`
 --
 ALTER TABLE `post_reactions`
-  ADD CONSTRAINT `reaction-post` FOREIGN KEY (`post_id`) REFERENCES `posts` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `reaction-user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE NO ACTION;
+  ADD CONSTRAINT `fk_post_reactions_post_id` FOREIGN KEY (`post_id`) REFERENCES `posts` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `fk_post_reactions_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `user_bookmarks`
+--
+ALTER TABLE `user_bookmarks`
+  ADD CONSTRAINT `fk_user_bookmarks_post_id` FOREIGN KEY (`post_id`) REFERENCES `posts` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `fk_user_bookmarks_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

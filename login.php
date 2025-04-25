@@ -20,6 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // User successfully authenticated
         $_SESSION['username'] = $username;
         $_SESSION['user_id'] = $user['id'];
+        $_SESSION['profilbild'] = $user['profile_image_path'];
         session_write_close();
         header("Location: index.php");
         exit();
@@ -33,7 +34,7 @@ include 'includes/header.php';
 ?>
 
 
-<div class="container mt-5">
+<div class="container mt-4">
     <div class="row justify-content-center">
         <div class="col-md-6 col-lg-4">
             <h1 class="text-center mb-4">Login</h1>

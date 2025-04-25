@@ -24,21 +24,21 @@ try {
 
 function fetch_all_users(PDO $pdo): array
 {
-    $stmt = $pdo->prepare("SELECT id, username, email, 'password' FROM users");
+    $stmt = $pdo->prepare("SELECT id, username, email FROM users");
     $stmt->execute();
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
 function fetch_user(PDO $pdo, int|string $user_id)
 {
-    $stmt = $pdo->prepare("SELECT id, username, email FROM users WHERE id = :user_id");
+    $stmt = $pdo->prepare("SELECT id, username, email, profile_image_path FROM users WHERE id = :user_id");
     $stmt->execute(['user_id' => $user_id]);
     return $stmt->fetch(PDO::FETCH_ASSOC);
 }
 
 function fetch_user_by_username(PDO $pdo, string $username)
 {
-    $stmt = $pdo->prepare("SELECT id, username, email, password FROM users WHERE username = :username");
+    $stmt = $pdo->prepare("SELECT id, username, email, profile_image_path, password FROM users WHERE username = :username");
     $stmt->execute(['username' => $username]);
     return $stmt->fetch(PDO::FETCH_ASSOC);
 }
@@ -56,6 +56,7 @@ function create_user(PDO $pdo, string $username, string $email, string $password
         'password' => $passwordHash
     ]);
 }
+
 
 function delete_user(PDO $pdo, int $user_id): bool
 {
@@ -110,14 +111,14 @@ function fetch_all_posts(PDO $pdo, $sorted_by = 'newest', $days_old = 'all'): ar
             break;
         case 'most_activity':
             // You can modify this query to use actual "activity" data (e.g., comment count, vote count)
-            $orderBy = "ORDER BY (SELECT COUNT(*) FROM comments WHERE post_id = posts.id) DESC";
+            $orderBy = "ORDER BY (SELECT COUNT(*) FROM post_comments WHERE post_id = posts.id) DESC";
             break;
         case 'trending':
             // Trending can be based on a combination of factors such as votes, comments, etc.
-            $orderBy = "ORDER BY (SELECT COUNT(*) FROM comments WHERE post_id = posts.id) DESC, created_at DESC";
+            $orderBy = "ORDER BY (SELECT COUNT(*) FROM post_comments WHERE post_id = posts.id) DESC, created_at DESC";
             break;
         case 'no_comments':
-            $whereClause .= ($whereClause ? " AND" : " WHERE") . " (SELECT COUNT(*) FROM comments WHERE post_id = posts.id) = 0";
+            $whereClause .= ($whereClause ? " AND" : " WHERE") . " (SELECT COUNT(*) FROM post_comments WHERE post_id = posts.id) = 0";
             $orderBy = "ORDER BY created_at DESC";
             break;
         case 'newest':
@@ -175,52 +176,52 @@ function update_post(PDO $pdo, int|string $post_id, string $title, string $conte
 // == COMMENTS ==
 function fetch_all_comments(PDO $pdo): array
 {
-    $stmt = $pdo->prepare("SELECT * FROM comments");
+    $stmt = $pdo->prepare("SELECT * FROM post_comments");
     $stmt->execute();
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
 function fetch_comments_by_post(PDO $pdo, int|string $post_id): array
 {
-    $stmt = $pdo->prepare("SELECT * FROM comments WHERE post_id = :post_id");
+    $stmt = $pdo->prepare("SELECT * FROM post_comments WHERE post_id = :post_id");
     $stmt->execute(['post_id' => $post_id]);
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
 function fetch_comments_by_user(PDO $pdo, int|string $author_id): array
 {
-    $stmt = $pdo->prepare("SELECT * FROM comments WHERE author_id = :author_id");
+    $stmt = $pdo->prepare("SELECT * FROM post_comments WHERE author_id = :author_id");
     $stmt->execute(['author_id' => $author_id]);
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
 function fetch_comment(PDO $pdo, int|string $comment_id)
 {
-    $stmt = $pdo->prepare("SELECT * FROM comments WHERE id = :comment_id");
+    $stmt = $pdo->prepare("SELECT * FROM post_comments WHERE id = :comment_id");
     $stmt->execute(['comment_id' => $comment_id]);
     return $stmt->fetch(PDO::FETCH_ASSOC);
 }
 
 function create_comment(PDO $pdo, int|string $post_id, int|string $author_id, string $content): bool
 {
-    $stmt = $pdo->prepare("INSERT INTO comments (post_id, author_id, content) VALUES (:post_id, :author_id, :content)");
+    $stmt = $pdo->prepare("INSERT INTO post_comments (post_id, author_id, content) VALUES (:post_id, :author_id, :content)");
     return $stmt->execute(['post_id' => $post_id, 'author_id' => $author_id, 'content' => $content]);
 }
 
 function delete_comment(PDO $pdo, int|string $comment_id): bool
 {
-    $stmt = $pdo->prepare("DELETE FROM comments WHERE id = :comment_id");
+    $stmt = $pdo->prepare("DELETE FROM post_comments WHERE id = :comment_id");
     return $stmt->execute(['comment_id' => $comment_id]);
 }
 
 // == POST REACTIONS ==
 // Get total upvotes and downvotes for a post 
-// -- get_reaction_counts($pdo, 1); // ['upvote' => x, 'downvote' => y]
+// -- fetch_reaction_counts($pdo, 1); // ['upvote' => x, 'downvote' => y]
 
-// $reactions = get_reaction_counts($pdo, $post_id);
+// $reactions = fetch_reaction_counts($pdo, $post_id);
 // $upvote_count = $reactions['upvote'];
 // $downvote_count = $reactions['downvote'];
-function get_reaction_counts(PDO $pdo, int $post_id): array
+function fetch_reaction_counts(PDO $pdo, int $post_id): array
 {
     $stmt = $pdo->prepare("SELECT reaction_type, COUNT(*) as count
         FROM post_reactions
@@ -237,7 +238,7 @@ function get_reaction_counts(PDO $pdo, int $post_id): array
 }
 
 // Get a user's reaction for a specific post
-function get_user_reaction(PDO $pdo, int $post_id, int $user_id): ?string
+function fetch_user_reaction(PDO $pdo, int $post_id, int $user_id): ?string
 {
     $stmt = $pdo->prepare("
         SELECT reaction_type
@@ -256,11 +257,11 @@ function get_user_reaction(PDO $pdo, int $post_id, int $user_id): ?string
 
 function set_reaction(PDO $pdo, int $post_id, int $user_id, string $reaction_type): bool
 {
-    $current = get_user_reaction($pdo, $post_id, $user_id);
+    $current = fetch_user_reaction($pdo, $post_id, $user_id);
 
     if ($current === $reaction_type) {
         // Toggle off if same reaction
-        return remove_reaction($pdo, $post_id, $user_id);
+        return delete_reaction($pdo, $post_id, $user_id);
     }
 
     if ($current === null) {
@@ -284,8 +285,8 @@ function set_reaction(PDO $pdo, int $post_id, int $user_id, string $reaction_typ
 }
 
 // Remove a user's reaction
-// remove_reaction($pdo, 1, 1, 'downvote'); // Removes the downvote
-function remove_reaction(PDO $pdo, int $post_id, int $user_id): bool
+// delete_reaction($pdo, 1, 1, 'downvote'); // Removes the downvote
+function delete_reaction(PDO $pdo, int $post_id, int $user_id): bool
 {
     $stmt = $pdo->prepare("
         DELETE FROM post_reactions
