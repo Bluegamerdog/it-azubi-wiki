@@ -170,7 +170,7 @@
                 <ul class="nav flex-column">
                     <?php for ($i = 1; $i <= 20; $i++): ?>
                         <li class="nav-item border-bottom border-body-subtle">
-                            <a href="#" class="nav-link text-body py-2">Post <?= $i ?></a>
+                            <a href="#" class="nav-link text-body py-1">Post <?= $i ?></a>
                         </li>
                     <?php endfor; ?>
                 </ul>
