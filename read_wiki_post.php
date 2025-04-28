@@ -27,11 +27,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $user_id) {
     if (isset($_POST['reaction']) && in_array($_POST['reaction'], ['upvote', 'downvote'])) {
         set_reaction($pdo, $post_id, $user_id, $_POST['reaction']);
     }
-    if (isset($_POST['delete_post']) && ($user_role === 'admin' || $user_role === 'moderator')) {
-        delete_post($pdo, $post_id);
-        header('Location: index.php');
-        exit();
-    }
     header("Location: read_forum_post.php?id=$post_id");
     exit();
 }
@@ -82,33 +77,30 @@ include 'includes/header.php';
             <div class="mt-3">
                 <p><?= nl2br(htmlspecialchars($post["content"])) ?></p>
             </div>
+            <!-- Show bookmark button for logged in users -->
+            <?php if ($user_id && $post_id):
+                $isBookmarked = is_post_bookmarked($pdo, $user_id, $post_id); ?>
+                <form action="actions_post.php" method="post" class="d-inline">
+                    <input type="hidden" name="post_id" value="<?= htmlspecialchars($post_id) ?>">
+                    <input type="hidden" name="user_id" value="<?= htmlspecialchars($user_id) ?>">
+                    <input type="hidden" name="isBookmarked" value="<?= $isBookmarked ? 1 : 0 ?>">
+                    <button type="submit" class="btn <?= $isBookmarked ? 'btn-success' : 'btn-info' ?>" name="action"
+                        value="bookmark_post">Lesezeichen</button>
+                </form>
+            <?php endif; ?>
 
-     
-
-                <!-- Show bookmark button for logged in users -->
-                <?php if ($user_id && $post_id):
-                    $isBookmarked = is_post_bookmarked($pdo, $user_id, $post_id); ?>
-                    <form action="actions_post.php" method="post" class="d-inline ms-2">
-                        <input type="hidden" name="post_id" value="<?= htmlspecialchars($post_id) ?>">
-                        <input type="hidden" name="user_id" value="<?= htmlspecialchars($user_id) ?>">
-                        <input type="hidden" name="isBookmarked" value="<?= $isBookmarked ? 1 : 0 ?>">
-                        <button type="submit" class="btn <?= $isBookmarked ? 'btn-success' : 'btn-info' ?>" name="action"
-                            value="bookmark_post">Lesezeichen</button>
-                    </form>
-                <?php endif; ?>
-
-                <!-- Show delete button for admins and moderators -->
-                <?php if ($user_role === 'admin' || $user_role === 'moderator'): ?>
-                    <form action="read_forum_post.php?id=<?= $post_id ?>" method="POST"
-                        onsubmit="return confirm('Are you sure you want to delete this post?');" class="d-inline ms-2">
-                        <button type="submit" class="btn btn-danger" name="delete_post" value=<?= $post_id ?>>Delete
-                            Post</button>
-                    </form>
-                <?php endif; ?>
-            </div>
-
+            <!-- Show delete button for admins and moderators -->
+            <?php if ($user_role === 'admin' || $user_role === 'moderator'): ?>
+                <form action="read_forum_post.php?id=<?= $post_id ?>" method="POST"
+                    onsubmit="return confirm('Are you sure you want to delete this post?');" class="d-inline ms-2">
+                    <button type="submit" class="btn btn-danger" name="delete_post" value=<?= $post_id ?>>Delete
+                        Post</button>
+                </form>
+            <?php endif; ?>
         </div>
+
     </div>
+</div>
 </div>
 
 <?php include 'includes/footer.php'; ?>

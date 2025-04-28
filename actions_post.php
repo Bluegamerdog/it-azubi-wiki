@@ -61,9 +61,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             exit;
         }
 
-    } else {
-        echo 'Invalid data.';
-        exit;
+    } elseif ($action === 'delete_post' && isset($_POST['post_id'])) {
+        $post = fetch_post($pdo, $_POST['post_id']);
+        if (!$post) {
+            echo 'Post not found.';
+            exit;
+        }
+        if ($post['author_id'] === $user_id || $_SESSION['role'] === 'admin' || $_SESSION['role'] === 'moderator') {
+            delete_post($pdo, $_POST['post_id']);
+
+            header("Location: index.php");
+            exit;
+        } else {
+            echo 'You do not have permission to delete this post.';
+            exit;
+        }
+    } elseif ($action === 'reaction' && isset($_POST['post_id']) && isset($_POST['reaction']) && in_array($_POST['reaction'], ['upvote', 'downvote'])) {
+        $post = fetch_post($pdo, $_POST['post_id']);
+        if (!$post) {
+            echo 'Post not found.';
+            exit;
+        }
+        set_reaction($pdo, $_POST['post_id'], $user_id, $_POST['reaction']);
     }
 } else {
     // Handle case where no POST request is made (e.g., direct access)

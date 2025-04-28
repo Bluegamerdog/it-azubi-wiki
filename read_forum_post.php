@@ -85,6 +85,8 @@ include 'includes/header.php';
             <!-- Reaction Buttons (Upvote, Downvote, etc.) -->
             <div class="d-flex mt-4">
                 <form action="read_forum_post.php?id=<?= $post_id ?>" method="POST" class="d-inline">
+                    <input type="hidden" name="action" value="reaction">
+                    <input type="hidden" name="post_id" value="<?= $post_id ?>">
                     <button class="btn <?= $userReaction === 'upvote' ? 'btn-success' : 'btn-outline-success' ?>"
                         type="submit" name="reaction" value="upvote" <?= $user_id ? '' : 'disabled' ?>>
                         👍 <?= $reactions['upvote'] ?>
@@ -108,9 +110,10 @@ include 'includes/header.php';
 
                 <!-- Show delete button for admins and moderators -->
                 <?php if ($user_role === 'admin' || $user_role === 'moderator'): ?>
-                    <form action="read_forum_post.php?id=<?= $post_id ?>" method="POST"
+                    <form action="actions_post.php?>" method="POST"
                         onsubmit="return confirm('Are you sure you want to delete this post?');" class="d-inline ms-2">
-                        <button type="submit" class="btn btn-danger" name="delete_post" value=<?= $post_id ?>>Delete
+                        <input type="hidden" name="post_id" value="<?= htmlspecialchars($post_id) ?>">
+                        <button type="submit" class="btn btn-danger" name="action" value="delete_post">Delete
                             Post</button>
                     </form>
                 <?php endif; ?>
@@ -161,7 +164,8 @@ include 'includes/header.php';
 
                             <p class="mt-2"><?= nl2br(htmlspecialchars($comment['content'])) ?></p>
 
-                            <div class="d-flex gap-2 mt-2">
+                            <div class="d-flex text-muted small ms-auto">
+                                <div class="d-flex"></div>
                                 <!-- Link to this comment -->
                                 <a href="#comment-<?= htmlspecialchars($comment['id']) ?>"
                                     class="btn btn-sm btn-outline-secondary">

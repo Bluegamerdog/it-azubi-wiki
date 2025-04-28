@@ -15,10 +15,10 @@ $postCount = count($posts);
 
 switch ($sorted_by) {
     case 'oldest':
-        $title = "Älteste Beiträge";
+        $title = "Ältesten Beiträge";
         break;
     case 'most_activity':
-        $title = "Beiträge mit den meisten Aktivitäten";
+        $title = "Beiträge mit der meisten Aktivität";
         break;
     case 'trending':
         $title = "Trendige Beiträge";
@@ -27,7 +27,7 @@ switch ($sorted_by) {
         $title = "Beiträge ohne Kommentare";
         break;
     default:
-        $title = "Neuste Beiträge";
+        $title = "Neusten Beiträge";
         break;
 }
 
@@ -91,7 +91,7 @@ if ($days_old != 'all') {
                 $votes = fetch_reaction_counts($pdo, $post['id']);
                 $voteCount = ($votes['upvote'] ?? 0) + ($votes['downvote'] ?? 0);
                 $author = isset($post['author_id']) && is_numeric($post['author_id']) ? fetch_user($pdo, $post['author_id']) : null;
-            ?>
+                ?>
                 <div class="post-card list-group-item list-group-item-action mb-3 rounded shadow-sm border-2 p-3">
 
                     <!-- Post Title and Content -->
