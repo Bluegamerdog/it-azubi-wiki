@@ -105,6 +105,15 @@ include 'includes/header.php';
                     </form>
                 <?php endif; ?>
 
+                <!-- Show report button -->
+
+                <?php if ($user_id && $post_id): ?>
+                    <form method="POST" action="report.php" onsubmit="return confirm('Bist du sicher, dass du diesen Beitrag melden möchtest?');">
+                        <input type="hidden" name="post_id" value="<?= htmlspecialchars($post_id) ?>">
+                        <button type="submit" class="btn btn-danger">Report</button>
+                    </form>
+                <?php endif; ?>
+
                 <!-- Show delete button for admins and moderators -->
                 <?php if ($user_role === 'admin' || $user_role === 'moderator'): ?>
                     <form action="read_post.php?id=<?= $post_id ?>" method="POST"
