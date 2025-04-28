@@ -174,10 +174,10 @@ require_once "functions/utils.php";
                 <!-- Bookmark List -->
                 <div class="bookmark-list flex-grow-1 overflow-auto mb-3">
                     <ul class="nav flex-column">
-                        <?php foreach (fetch_user_bookmarks($pdo, $_SESSION['user_id']) as $post): ?>
+                        <?php foreach (fetch_user_bookmarks($pdo, $_SESSION['user_id']) as $bookmarkedPost): ?>
                             <li class="nav-item border-bottom border-body-subtle">
-                                <a href=<?= "read_post.php?id=" . $post['id'] ?> class="nav-link text-body py-1">Post
-                                    <?= nl2br(htmlspecialchars(substr($post['content'], 0, 15))) . (strlen($post['content']) > 15 ? '...' : '') ?></a>
+                                <a href=<?= "read_post.php?id=" . $bookmarkedPost['id'] ?> class="nav-link text-body py-1">Post
+                                    <?= nl2br(htmlspecialchars(substr($bookmarkedPost['content'], 0, 15))) . (strlen($bookmarkedPost['content']) > 15 ? '...' : '') ?></a>
                             </li>
                         <?php endforeach; ?>
                     </ul>
