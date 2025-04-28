@@ -16,7 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     ]);
 
     // Redirection or confirmation message
-    header('Location: read_post.php?id=' . $post_id);
+    header('Location: read_forum_post.php?id=' . $post_id);
     exit();
 }
 ?>
