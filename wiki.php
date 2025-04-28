@@ -91,7 +91,7 @@ include 'includes/header.php';
 
                     <!-- Post Title and Content -->
                     <h5 class="fw-semibold">
-                        <a href="readwikipost.php?id=<?= htmlspecialchars($post['id']) ?>"
+                        <a href="read_wiki_post.php?id=<?= htmlspecialchars($post['id']) ?>"
                             class="text-decoration-none link-primary">
                             <?= htmlspecialchars($post['title']) ?>
                         </a>
