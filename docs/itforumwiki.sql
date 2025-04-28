@@ -109,8 +109,8 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `role`, `username`, `email`, `password`, `created_at`, `profile_image_path`) VALUES
-(1, 'admin', 'root', 'root@gmail.com', '$2y$10$JHZnCkPblwnmGPo5i3VoL./qsi45ebi5E7KHLYliJbH5vmi/rx/Lu', '2025-04-25 15:12:41', 'uploads/user_avatars/avatar_user_1.png'),
-(2, 'moderator', 'jonathan', 'jonathan@gmail.com', '$2y$10$8JyuUIYWjhqV.pgBA3MzFOr14VnNYsbK3CAoeu0piagbPUz9c966i', '2025-04-25 12:06:32', 'uploads/user_avatars/avatar_user_3.png');
+(1, 'admin', 'root', 'root@gmail.com', '$2y$10$JHZnCkPblwnmGPo5i3VoL./qsi45ebi5E7KHLYliJbH5vmi/rx/Lu', '2025-04-25 15:12:41', 'uploads/user_avatars/default.png'),
+(2, 'moderator', 'jonathan', 'jonathan@gmail.com', '$2y$10$8JyuUIYWjhqV.pgBA3MzFOr14VnNYsbK3CAoeu0piagbPUz9c966i', '2025-04-25 12:06:32', 'uploads/user_avatars/default.png');
 
 -- --------------------------------------------------------
 
