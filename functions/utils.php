@@ -25,7 +25,7 @@ function loadEnv($path)
     }
 }
 
-function time_ago($timestamp)
+function time_ago(string $timestamp, $lowercaseVor = false): string
 {
     $time_ago = strtotime($timestamp);
     $current_time = time();
@@ -40,21 +40,23 @@ function time_ago($timestamp)
     $months = round($seconds / 2629440);  // Roughly 30 days
     $years = round($seconds / 31553280); // Roughly 365.25 days
 
+    $vor = $lowercaseVor ? 'vor' : 'Vor';
+
     // Return the human-readable format based on the time difference
     if ($seconds <= 60) {
-        return ($seconds == 1) ? "Vor einer Sekunde" : "Vor $seconds Sekunden";
+        return ($seconds == 1) ? ($vor . " einer Sekunde") : ($vor . " $seconds Sekunden");
     } else if ($minutes <= 60) {
-        return ($minutes == 1) ? "Vor einer Minute" : "Vor $minutes Minuten";
+        return ($minutes == 1) ? ($vor . " einer Minute") : ($vor . " $minutes Minuten");
     } else if ($hours <= 24) {
-        return ($hours == 1) ? "Vor einer Stunde" : "Vor $hours Stunden";
+        return ($hours == 1) ? ($vor . " einer Stunde") : ($vor . " $hours Stunden");
     } else if ($days <= 7) {
-        return ($days == 1) ? "Gestern" : "Vor $days Tagen";
+        return ($days == 1) ? "Gestern" : ($vor . " $days Tagen");
     } else if ($weeks <= 4.3) {  // 4.3 weeks = 30 days
-        return ($weeks == 1) ? "Vor einer Woche" : "Vor $weeks Wochen";
+        return ($weeks == 1) ? ($vor . " einer Woche") : ($vor . " $weeks Wochen");
     } else if ($months <= 12) {
-        return ($months == 1) ? "Vor einem Monat" : "Vor $months Monaten";
+        return ($months == 1) ? ($vor . " einem Monat") : ($vor . " $months Monaten");
     } else {
-        return ($years == 1) ? "Vor einem Jahr" : "Vor $years Jahren";
+        return ($years == 1) ? ($vor . " einem Jahr") : ($vor . " $years Jahren");
     }
 }
 

@@ -62,9 +62,15 @@ include 'includes/header.php';
                                 deleted_user
                             <?php endif; ?>
                         </strong>
+                        <!-- Created time -->
                         <small class="text-muted">· <?= htmlspecialchars(time_ago($post['created_at'])); ?></small>
-                    </div>
 
+                        <!-- Only show updated time if different -->
+                        <?php if ($post['updated_at'] !== $post['created_at']): ?>
+                            <small class="text-muted">(Zuletzt bearbeitet
+                                <?= htmlspecialchars(time_ago($post['updated_at'], true)); ?>)</small>
+                        <?php endif; ?>
+                    </div>
                 </div>
             </div>
 
