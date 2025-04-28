@@ -67,6 +67,9 @@ require_once "functions/utils.php";
             background-color: #f8f9fa;
             padding: 10px 20px;
             border-bottom: 1px solid #ddd;
+            position: sticky;
+            top: 0;
+            z-index: 1030;
         }
 
         [data-bs-theme="dark"] .top-nav {

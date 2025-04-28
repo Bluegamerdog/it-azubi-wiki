@@ -1,4 +1,5 @@
 <?php
+session_start();
 require_once "functions/database.php";
 require_once 'functions/utils.php';
 
@@ -10,23 +11,58 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
-    if ($action === 'bookmark_post' && isset($_POST['post_id'], $_POST['user_id'])) {
+    $user_id = $_SESSION['user_id'] ?? null;
+
+    if (!isset($user_id)) {
+        echo 'Unauthorized.';
+        exit;
+    }
+
+    if ($action === 'bookmark_post' && isset($_POST['post_id'])) {
         $post_id = $_POST['post_id'];
-        $user_id = $_POST['user_id'];
         $isBookmarked = (bool) $_POST['isBookmarked'];
 
-        var_dump($_POST);
-        var_dump($isBookmarked);
-
         if ($isBookmarked) {
-            echo 'ubnbookmarked';
             unbookmark_post($pdo, $user_id, $post_id);
         } else {
-            echo 'bookmarked';
             bookmark_post($pdo, $user_id, $post_id);
         }
 
         header("Location: " . $_SERVER['HTTP_REFERER']);
+        exit;
+    } elseif ($action === 'post_comment' && isset($_POST['content']) && isset($_POST['post_id'])) {
+        create_comment($pdo, $_POST['post_id'], $user_id, $_POST['content']);
+
+        header("Location: " . $_SERVER['HTTP_REFERER']);
+        exit;
+    } elseif ($action === 'flag_comment' && isset($_POST['comment_id'])) {
+        $comment_id = $_POST['comment_id'];
+        flag_comment($pdo, $comment_id, $user_id);
+
+        // Redirect back to the same page after reporting
+        header("Location: " . $_SERVER['HTTP_REFERER']);
+        exit;
+    } elseif ($action === 'delete_comment' && isset($_POST['comment_id'])) {
+        $comment_id = $_POST['comment_id'];
+
+        // Fetch the comment to check if the current user can delete it
+        $comment = fetch_comment($pdo, $comment_id);
+        if (!$comment) {
+            echo 'Comment not found.';
+            exit;
+        }
+        if ($comment['author_id'] === $user_id || $_SESSION['role'] === 'admin' || $_SESSION['role'] === 'moderator') {
+            delete_comment($pdo, $comment_id);
+
+            header("Location: " . $_SERVER['HTTP_REFERER']);
+            exit;
+        } else {
+            echo 'You do not have permission to delete this comment.';
+            exit;
+        }
+
+    } else {
+        echo 'Invalid data.';
         exit;
     }
 } else {
