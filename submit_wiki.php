@@ -28,7 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <option value="">Kategori ra entekhab konid...</option>
             <?php
             // Gireftane hame categories
-            $categories = fetch_all_categories($pdo);
+            $categories = fetch_all_wiki_categories($pdo);
             foreach ($categories as $category) {
                 echo '<option value="' . $category['id'] . '">' . htmlspecialchars($category['name']) . '</option>';
             }

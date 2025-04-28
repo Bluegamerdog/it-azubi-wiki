@@ -120,7 +120,7 @@ include 'includes/header.php';
                     <form action="submit_wiki.php?id=<?= $post_id ?>" method="POST"
                         onsubmit="return confirm('');" class="d-inline ms-2">
                         <input type="hidden" name="post_id" value="<?= htmlspecialchars($post_id) ?>">
-                        <button class="wiki-submit-btn btn btn-warning ms-2" data-post-id="<?= $post_id ?>">Wiki Submission</button>
+                        <button class="wiki-submit-btn btn btn-warning" data-post-id="<?= $post_id ?>">Wiki Submission</button>
                     </form>
 
                 <?php endif; ?>
