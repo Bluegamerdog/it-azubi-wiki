@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 25, 2025 at 10:24 AM
+-- Generation Time: Apr 25, 2025 at 05:29 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -43,7 +43,7 @@ CREATE TABLE `posts` (
 --
 
 INSERT INTO `posts` (`id`, `author_id`, `title`, `content`, `created_at`, `updated_at`, `is_wiki_entry`, `wiki_category_id`) VALUES
-(1, 1, 'Root User Test Post | Title Here', 'Root User Test Post - Content Here', '2025-04-23 09:27:45', '2025-04-25 10:23:31', 0, NULL),
+(1, 1, 'Root User Test Post | Title Here', 'Root User Test Post - Content Here', '2025-04-23 09:27:45', '2025-04-25 15:14:32', 0, NULL),
 (2, NULL, 'Deleted User Test Post', 'Deleted User Test Post Deleted User Test Post Deleted User Test Post Deleted User Test Post Deleted User Test Post', '2025-04-25 09:04:07', '2025-04-25 10:23:04', 0, NULL);
 
 -- --------------------------------------------------------
@@ -85,7 +85,8 @@ CREATE TABLE `post_reactions` (
 --
 
 INSERT INTO `post_reactions` (`id`, `post_id`, `user_id`, `reaction_type`) VALUES
-(1, 1, 1, 'upvote');
+(7, 2, 1, 'downvote'),
+(8, 1, 1, 'upvote');
 
 -- --------------------------------------------------------
 
@@ -95,6 +96,7 @@ INSERT INTO `post_reactions` (`id`, `post_id`, `user_id`, `reaction_type`) VALUE
 
 CREATE TABLE `users` (
   `id` int(11) NOT NULL,
+  `role` enum('user','moderator','admin') NOT NULL DEFAULT 'user',
   `username` varchar(20) NOT NULL,
   `email` varchar(100) NOT NULL,
   `password` varchar(255) NOT NULL,
@@ -106,8 +108,9 @@ CREATE TABLE `users` (
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`id`, `username`, `email`, `password`, `created_at`, `profile_image_path`) VALUES
-(1, 'root', 'root@gmail.com', '$2y$10$.uceBXGKRuRWdgaSCxd6qedlgs70K/ebFHGaJjCUkPZCMLZGRPwei', '2025-04-23 09:26:16', 'assets/profile_images/default.png');
+INSERT INTO `users` (`id`, `role`, `username`, `email`, `password`, `created_at`, `profile_image_path`) VALUES
+(1, 'admin', 'root', 'root@gmail.com', '$2y$10$JHZnCkPblwnmGPo5i3VoL./qsi45ebi5E7KHLYliJbH5vmi/rx/Lu', '2025-04-25 15:12:41', 'uploads/user_avatars/avatar_user_1.png'),
+(2, 'moderator', 'jonathan', 'jonathan@gmail.com', '$2y$10$8JyuUIYWjhqV.pgBA3MzFOr14VnNYsbK3CAoeu0piagbPUz9c966i', '2025-04-25 12:06:32', 'uploads/user_avatars/avatar_user_3.png');
 
 -- --------------------------------------------------------
 
@@ -126,7 +129,7 @@ CREATE TABLE `user_bookmarks` (
 --
 
 INSERT INTO `user_bookmarks` (`id`, `user_id`, `post_id`) VALUES
-(1, 1, 1);
+(4, 1, 1);
 
 -- --------------------------------------------------------
 
@@ -219,19 +222,19 @@ ALTER TABLE `post_comments`
 -- AUTO_INCREMENT for table `post_reactions`
 --
 ALTER TABLE `post_reactions`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `user_bookmarks`
 --
 ALTER TABLE `user_bookmarks`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `wiki_categories`
