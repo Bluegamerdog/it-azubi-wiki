@@ -93,6 +93,15 @@ function update_user(PDO $pdo, int|string $user_id, $data): bool
     return $stmt->execute($params);
 }
 
+// == CATEGORIES ==
+
+function fetch_all_wiki_categories(PDO $pdo): array
+{
+    $stmt = $pdo->prepare("SELECT * FROM wiki_categories");
+    $stmt->execute();
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
 
 // == POSTS ==
 
@@ -125,13 +134,51 @@ function fetch_all_posts(PDO $pdo, $sorted_by = 'newest', $days_old = 'all'): ar
             $whereClause .= ($whereClause ? " AND" : " WHERE") . " (SELECT COUNT(*) FROM post_comments WHERE post_id = posts.id) = 0";
             $orderBy = "ORDER BY created_at DESC";
             break;
-        case 'newest':
-        default:
+        default: // Newest
             $orderBy = "ORDER BY created_at DESC";
             break;
     }
 
     $stmt = $pdo->prepare("SELECT * FROM posts" . $whereClause . " " . $orderBy);
+    $stmt->execute($params);
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
+function fetch_all_wiki_posts(PDO $pdo, $sorted_by = 'newest', $days_old = 'all', $category_id = null): array
+{
+    $whereClause = 'WHERE is_wiki_entry = 1';
+    $params = [];
+
+    // Filter by days old
+    if ($days_old != 'all') {
+        $date_limit = date('Y-m-d', strtotime("-$days_old days"));
+        $whereClause .= " AND created_at >= :date_limit";
+        $params['date_limit'] = $date_limit;
+    }
+
+    switch ($category_id) {
+        case 0;
+            $whereClause .= " AND wiki_category_id IS NULL";
+            break;
+        case !null:
+            $whereClause .= " AND wiki_category_id = :wiki_category_id";
+            $params['wiki_category_id'] = $category_id;
+            break;
+
+    }
+
+    // Sorting logic
+    switch ($sorted_by) {
+        case 'oldest':
+            $orderBy = "ORDER BY created_at ASC";
+            break;
+        default: // Newest
+            $orderBy = "ORDER BY created_at DESC";
+            break;
+    }
+
+
+    $stmt = $pdo->prepare("SELECT * FROM posts $whereClause $orderBy");
     $stmt->execute($params);
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }

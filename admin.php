@@ -103,7 +103,7 @@ include 'includes/header.php';
                             ?>
                         <tr>
 
-                            <td><a href=<?= "read_post.php?id=" . $reportedComment['post_id'] . "#comment-" . $reportedComment['id'] ?>><?= htmlspecialchars($reportedComment['content']) ?></a></td>
+                            <td><a href=<?= "read_forum_post.php?id=" . $reportedComment['post_id'] . "#comment-" . $reportedComment['id'] ?>><?= htmlspecialchars($reportedComment['content']) ?></a></td>
                             <td><a href=<?= "profile.php?id=" . $reportedUser['id'] ?>><?= htmlspecialchars($reportedUser['username']) ?></a>
                             <td><a href=<?= "profile.php?id=" . $reportingUser['id'] ?>><?= htmlspecialchars($reportingUser['username']) ?></a>
                             </td>

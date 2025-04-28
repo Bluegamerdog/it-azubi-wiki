@@ -8,7 +8,7 @@ require_once "functions/utils.php";
 
 <head>
     <meta charset="UTF-8">
-    <title><?= htmlspecialchars($pageTitle ?? "IT Forum")?></title>
+    <title><?= htmlspecialchars($pageTitle ?? "IT Forum") ?></title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js" defer></script>
@@ -113,7 +113,7 @@ require_once "functions/utils.php";
     <!-- Top Nav Bar -->
     <nav class="navbar navbar-expand-sm navbar-light top-nav">
         <div class="container-fluid">
-            <a class="navbar-brand" href=<?= htmlspecialchars($pageHref ?? "index.php")?>><?= htmlspecialchars($pageHeader ?? "IT Forum")?></a>
+            <a class="navbar-brand" href=<?= htmlspecialchars($pageHref ?? "index.php") ?>><?= htmlspecialchars($pageHeader ?? "IT Forum") ?></a>
             <form class="d-flex search-bar">
                 <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
             </form>
@@ -151,19 +151,16 @@ require_once "functions/utils.php";
             <!-- Main Nav Links -->
             <div class="mb-3">
                 <ul class="nav flex-column">
-                <li class="nav-item border-bottom border-body-subtle">
-                        <a href="wiki.php" class="nav-link text-body py-2">Zur Wiki</a>
+                    <li class="nav-item border-bottom border-body-subtle">
+                        <a href="index.php" class="nav-link text-body py-2">Forum</a>
                     </li>
                     <li class="nav-item border-bottom border-body-subtle">
-                        <a href="index.php" class="nav-link text-body py-2">Beiträge</a>
+                        <a href="wiki.php" class="nav-link text-body py-2">Wiki</a>
                     </li>
                     <li class="nav-item border-bottom border-body-subtle">
                         <a href="profiles.php" class="nav-link text-body py-2">Benutzer</a>
                     </li>
-                    
-                    <!-- <li class="nav-item border-bottom border-body-subtle">
-                        <a href="delete_post.php" class="nav-link text-body py-2">Verwalten</a>
-                    </li> -->
+
                     <?php if (isset($_SESSION['role']) && $_SESSION['role'] == 'admin'): ?>
                         <li class="nav-item border-bottom border-body-subtle">
                             <a href="admin.php" class="nav-link text-body py-2">Admin Panel</a>
@@ -183,7 +180,8 @@ require_once "functions/utils.php";
                     <ul class="nav flex-column">
                         <?php foreach (fetch_user_bookmarks($pdo, $_SESSION['user_id']) as $bookmarkedPost): ?>
                             <li class="nav-item border-bottom border-body-subtle">
-                                <a href=<?= "read_post.php?id=" . $bookmarkedPost['id'] ?> class="nav-link text-body py-1">Post
+                                <a href=<?= "read_forum_post.php?id=" . $bookmarkedPost['id'] ?>
+                                    class="nav-link text-body py-1">Post
                                     <?= nl2br(htmlspecialchars(substr($bookmarkedPost['content'], 0, 15))) . (strlen($bookmarkedPost['content']) > 15 ? '...' : '') ?></a>
                             </li>
                         <?php endforeach; ?>

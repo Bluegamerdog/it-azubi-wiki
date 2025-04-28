@@ -32,7 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $user_id) {
         header('Location: index.php');
         exit();
     }
-    header("Location: read_post.php?id=$post_id");
+    header("Location: read_forum_post.php?id=$post_id");
     exit();
 }
 
@@ -99,7 +99,7 @@ include 'includes/header.php';
 
                 <!-- Show delete button for admins and moderators -->
                 <?php if ($user_role === 'admin' || $user_role === 'moderator'): ?>
-                    <form action="read_post.php?id=<?= $post_id ?>" method="POST"
+                    <form action="read_forum_post.php?id=<?= $post_id ?>" method="POST"
                         onsubmit="return confirm('Are you sure you want to delete this post?');" class="d-inline ms-2">
                         <button type="submit" class="btn btn-danger" name="delete_post" value=<?= $post_id ?>>Delete
                             Post</button>
