@@ -255,6 +255,38 @@ function delete_comment(PDO $pdo, int|string $comment_id): bool
     return $stmt->execute(['comment_id' => $comment_id]);
 }
 
+function fetch_flagged_comments(PDO $pdo): array
+{
+    $stmt = $pdo->prepare("SELECT * FROM flagged_comments");
+    $stmt->execute();
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
+function is_comment_flagged(PDO $pdo, int|string $comment_id): bool
+{
+    $stmt = $pdo->prepare("SELECT COUNT(*) FROM flagged_comments WHERE comment_id = :comment_id");
+    $stmt->execute(['comment_id' => $comment_id]);
+    $count = $stmt->fetchColumn();
+    return $count > 0;
+}
+
+function flag_comment(PDO $pdo, int|string $comment_id, int|string $flagged_by): bool
+{
+    $stmt = $pdo->prepare("INSERT INTO flagged_comments (comment_id, flagged_by) VALUES (:comment_id, :flagged_by)");
+    return $stmt->execute([
+        'comment_id' => $comment_id,
+        'flagged_by' => $flagged_by
+    ]);
+}
+
+
+function unflag_comment(PDO $pdo, int|string $comment_id): bool
+{
+    $stmt = $pdo->prepare("DELETE FROM flagged_comments WHERE comment_id = :comment_id");
+    return $stmt->execute(['comment_id' => $comment_id]);
+}
+
+
 // == POST REACTIONS ==
 // Get total upvotes and downvotes for a post 
 // -- fetch_reaction_counts($pdo, 1); // ['upvote' => x, 'downvote' => y]

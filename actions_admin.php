@@ -27,6 +27,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         delete_user($pdo, $_POST['user_id']);
         header("Location: " . $_SERVER['HTTP_REFERER']);
         exit;
+    } elseif ($action === 'unflag_comment' && isset($_POST['comment_id'])) {
+        unflag_comment($pdo, $_POST['comment_id']);
+        header("Location: " . $_SERVER['HTTP_REFERER']);
+        exit;
     }
 } else {
     // Handle case where no POST request is made (e.g., direct access)
