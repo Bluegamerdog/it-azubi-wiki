@@ -112,6 +112,13 @@ include 'includes/header.php';
                         <button type="submit" class="btn btn-danger" name="delete_post" value=<?= $post_id ?>>Delete
                             Post</button>
                     </form>
+
+                    <form action="submit_wiki.php?id=<?= $post_id ?>" method="POST"
+                        onsubmit="return confirm('');" class="d-inline ms-2">
+                        <input type="hidden" name="post_id" value="<?= htmlspecialchars($post_id) ?>">
+                        <button class="wiki-submit-btn btn btn-warning ms-2" data-post-id="<?= $post_id ?>">Wiki Submission</button>
+                    </form>
+
                 <?php endif; ?>
             </div>
 
@@ -158,5 +165,28 @@ include 'includes/header.php';
         </div>
     </div>
 </div>
+
+<!-- Wiki Form (Hidden by default) -->
+<div id="wiki-form" style="display:none; margin-top:20px;">
+    <form method="POST" action="submit_wiki.php">
+        <input type="hidden" name="post_id" id="wiki-post-id">
+        <label for="category">Kategorie auswählen:</label>
+        <select name="category" id="category" required>
+            <option value="1">Netzwerk</option>
+            <option value="3">Programmieren</option>
+            <option value="4">Betriebssysteme</option>
+        </select>
+        <button type="submit">Absenden</button>
+    </form>
+</div>
+
+<script>
+    document.querySelectorAll('.wiki-submit-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            document.getElementById('wiki-form').style.display = 'block';
+            document.getElementById('wiki-post-id').value = this.getAttribute('data-post-id');
+        });
+    });
+</script>
 
 <?php include 'includes/footer.php'; ?>

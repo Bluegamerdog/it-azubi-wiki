@@ -321,20 +321,34 @@ function set_reaction(PDO $pdo, int $post_id, int $user_id, string $reaction_typ
     return $stmt->execute([
         'post_id' => $post_id,
         'user_id' => $user_id,
-        'reaction_type' => $reaction_type
+        'reaction_type' => $reaction_type,
     ]);
 }
 
-// Remove a user's reaction
-// delete_reaction($pdo, 1, 1, 'downvote'); // Removes the downvote
+// Remove a reaction for a post
 function delete_reaction(PDO $pdo, int $post_id, int $user_id): bool
 {
-    $stmt = $pdo->prepare("
-        DELETE FROM post_reactions
-        WHERE post_id = :post_id AND user_id = :user_id
-    ");
-    return $stmt->execute([
-        'post_id' => $post_id,
-        'user_id' => $user_id
-    ]);
+    $stmt = $pdo->prepare("DELETE FROM post_reactions WHERE post_id = :post_id AND user_id = :user_id");
+    return $stmt->execute(['post_id' => $post_id, 'user_id' => $user_id]);
+}
+
+// == CATEGORIES ==
+
+function fetch_all_categories(PDO $pdo): array
+{
+    $stmt = $pdo->prepare("SELECT * FROM wiki_categories");
+    $stmt->execute();
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
+function create_category(PDO $pdo, string $name): bool
+{
+    $stmt = $pdo->prepare("INSERT INTO wiki_categories (name) VALUES (:name)");
+    return $stmt->execute(['name' => $name]);
+}
+
+function delete_category(PDO $pdo, int $category_id): bool
+{
+    $stmt = $pdo->prepare("DELETE FROM wiki_categories WHERE id = :category_id");
+    return $stmt->execute(['category_id' => $category_id]);
 }
