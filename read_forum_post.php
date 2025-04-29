@@ -98,7 +98,7 @@ include 'includes/header.php';
                 </form>
 
                 <!-- Show bookmark button for logged in users -->
-                <?php if ($user_id && $post_id):
+                <?php if ($user_id):
                     $isBookmarked = is_post_bookmarked($pdo, $user_id, $post_id); ?>
                     <form action="actions_post.php" method="post" class="d-inline ms-2">
                         <input type="hidden" name="post_id" value="<?= htmlspecialchars($post_id) ?>">
@@ -108,19 +108,29 @@ include 'includes/header.php';
                     </form>
                 <?php endif; ?>
 
+                <!-- Show report button -->
+                <?php if ($user_id && !is_post_flagged($pdo, $post_id)): ?>
+                    <form action="actions_post.php" method="post" class="d-inline ms-2"
+                        onsubmit="return confirm('Bist du sicher, dass du diesen Beitrag melden möchtest?');">
+                        <input type="hidden" name="post_id" value="<?= htmlspecialchars($post_id) ?>">
+                        <button type="submit" class="btn btn-danger" name="action" value="flag_post">Report</button>
+                    </form>
+                <?php endif; ?>
+
                 <!-- Show delete button for admins and moderators -->
                 <?php if ($user_role === 'admin' || $user_role === 'moderator'): ?>
-                    <form action="actions_post.php?>" method="POST"
+                    <form action="actions_post.php" method="POST"
                         onsubmit="return confirm('Are you sure you want to delete this post?');" class="d-inline ms-2">
                         <input type="hidden" name="post_id" value="<?= htmlspecialchars($post_id) ?>">
                         <button type="submit" class="btn btn-danger" name="action" value="delete_post">Delete
                             Post</button>
                     </form>
 
-                    <form action="submit_wiki.php?id=<?= $post_id ?>" method="POST"
-                        onsubmit="return confirm('');" class="d-inline ms-2">
+                    <form action="submit_wiki.php?id=<?= $post_id ?>" method="POST" onsubmit="return confirm('');"
+                        class="d-inline ms-2">
                         <input type="hidden" name="post_id" value="<?= htmlspecialchars($post_id) ?>">
-                        <button class="wiki-submit-btn btn btn-warning" data-post-id="<?= $post_id ?>">Wiki Submission</button>
+                        <button class="wiki-submit-btn btn btn-warning" data-post-id="<?= $post_id ?>">Wiki
+                            Submission</button>
                     </form>
 
                 <?php endif; ?>
@@ -233,7 +243,7 @@ include 'includes/header.php';
 
 <script>
     document.querySelectorAll('.wiki-submit-btn').forEach(button => {
-        button.addEventListener('click', function() {
+        button.addEventListener('click', function () {
             document.getElementById('wiki-form').style.display = 'block';
             document.getElementById('wiki-post-id').value = this.getAttribute('data-post-id');
         });

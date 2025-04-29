@@ -224,6 +224,37 @@ function update_post(PDO $pdo, int|string $post_id, string $title, string $conte
     ]);
 }
 
+function fetch_flagged_posts(PDO $pdo): array
+{
+    $stmt = $pdo->prepare("SELECT * FROM flagged_posts");
+    $stmt->execute();
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
+function is_post_flagged(PDO $pdo, int|string $post_id): bool
+{
+    $stmt = $pdo->prepare("SELECT COUNT(*) FROM flagged_posts WHERE post_id = :post_id");
+    $stmt->execute(['post_id' => $post_id]);
+    $count = $stmt->fetchColumn();
+    return $count > 0;
+}
+
+function flag_post(PDO $pdo, int|string $post_id, int|string $flagged_by): bool
+{
+    $stmt = $pdo->prepare("INSERT INTO flagged_posts (post_id, flagged_by) VALUES (:post_id, :flagged_by)");
+    return $stmt->execute([
+        'post_id' => $post_id,
+        'flagged_by' => $flagged_by
+    ]);
+}
+
+function unflag_post(PDO $pdo, int|string $post_id): bool
+{
+    $stmt = $pdo->prepare("DELETE FROM flagged_posts WHERE post_id = :post_id");
+    return $stmt->execute(['post_id' => $post_id]);
+}
+
+
 // Bookmark a post
 function bookmark_post(PDO $pdo, int $user_id, int $post_id): bool
 {

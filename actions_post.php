@@ -36,12 +36,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         header("Location: " . $_SERVER['HTTP_REFERER']);
         exit;
     } elseif ($action === 'flag_comment' && isset($_POST['comment_id'])) {
-        $comment_id = $_POST['comment_id'];
+        $comment_id = (int) $_POST['comment_id'];
         flag_comment($pdo, $comment_id, $user_id);
 
         // Redirect back to the same page after reporting
         header("Location: " . $_SERVER['HTTP_REFERER']);
         exit;
+    } elseif ($action === 'flag_post' && isset($_POST['post_id'])) {
+        $post_id = (int) $_POST['post_id'];
+        flag_post($pdo, $post_id, $user_id);
+
+        header("Location: " . $_SERVER['HTTP_REFERER']);
+        exit();
     } elseif ($action === 'delete_comment' && isset($_POST['comment_id'])) {
         $comment_id = $_POST['comment_id'];
 
