@@ -1,8 +1,7 @@
 <?php
-session_start();
-require_once 'functions/database.php';   // PDO-Verbindung
-require_once 'functions/utils.php';      // check_admin
-
+require_once __DIR__  . '/functions/database.php';   // PDO-Verbindung
+require_once __DIR__  . '/functions/utils.php';      // check_admin
+start_session();
 // Zugriff prüfen (nur Administratoren)
 $user_id = $_SESSION["user_id"] ?? NULL;
 if (!$user_id) {
@@ -40,15 +39,15 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["submit"])) {
 
     // Wenn keine Fehler aufgetreten sind, den Beitrag aktualisieren
     if (empty($errors)) {
-        // Jetzt wird die Anfrage zu actions_post.php gesendet
+        // Jetzt wird die Anfrage zu actions/actions_post.php gesendet
         $_POST['action'] = 'edit_post';
-        // Weiterhin validiere die Daten auf der actions_post.php-Seite
-        include 'actions_post.php'; // Dies führt das Update auf actions_post.php aus.
+        // Weiterhin validiere die Daten auf der actions/actions_post.php-Seite
+        include 'actions/actions_post.php'; // Dies führt das Update auf actions/actions_post.php aus.
         exit();
     }
 }
 
-include 'includes/header.php';
+include __DIR__ . '/includes/header.php';
 ?>
 
 <div class="container mt-4">
@@ -81,4 +80,4 @@ include 'includes/header.php';
     </form>
 </div>
 
-<?php include 'includes/footer.php'; ?>
+<?php include __DIR__ . '/includes/footer.php'; ?>

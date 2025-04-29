@@ -1,7 +1,7 @@
 <?php
-session_start();
-require_once 'functions/database.php';   // PDO-Verbindung
-require_once 'functions/utils.php';      // check_admin
+require_once __DIR__  . '/functions/database.php';   // PDO-Verbindung
+require_once __DIR__  . '/functions/utils.php';      // check_admin
+start_session();
 
 if (!isset($_SESSION['username']) || !isset($_SESSION['user_id'])) {
     header("Location: login.php");
@@ -37,7 +37,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     }
 }
 
-include 'includes/header.php';
+include __DIR__ . '/includes/header.php';
 ?>
 
 <div class="container mt-4">
@@ -74,4 +74,4 @@ include 'includes/header.php';
     </form>
 </div>
 
-<?php include 'includes/footer.php'; ?>
+<?php include __DIR__ . '/includes/footer.php'; ?>

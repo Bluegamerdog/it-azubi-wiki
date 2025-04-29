@@ -1,7 +1,7 @@
 <?php
-session_start();
-require_once "functions/database.php";
-require_once 'functions/utils.php';
+require_once __DIR__  . "/../functions/database.php";
+require_once __DIR__  . '/../functions/utils.php';
+start_session();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Check the action to determine what to do

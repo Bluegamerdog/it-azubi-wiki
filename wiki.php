@@ -1,8 +1,7 @@
 <?php
-session_start();
-require_once 'functions/database.php';
-require_once 'functions/utils.php';
-
+require_once __DIR__ . '/functions/database.php';
+require_once __DIR__ . '/functions/utils.php';
+start_session();
 
 // Get the filters from the GET request
 $sorted_by = $_GET['sorted_by'] ?? 'newest';
@@ -30,7 +29,7 @@ if ($days_old != 'all') {
 $pageTitle = "IT Wiki";
 $pageHeader = "IT Wiki";
 $pageHref = "wiki.php";
-include 'includes/header.php';
+include __DIR__ . '/includes/header.php';
 ?>
 
 <div class="container mt-5">
@@ -115,4 +114,4 @@ include 'includes/header.php';
 
 </div>
 
-<?php include 'includes/footer.php'; ?>
+<?php include __DIR__ . '/includes/footer.php'; ?>

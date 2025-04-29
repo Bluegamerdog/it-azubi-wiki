@@ -1,19 +1,14 @@
 <?php
+
+require_once __DIR__ . '/../functions/database.php';
 // Wenn Formular abgesendet wurde
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-
-    // Verbindungsdaten
-
-
     // SQL-Datei festlegen
     $sql_file = 'itforumwiki.sql';
 
-    // Verbindung zur Datenbank aufbauen
-    try {
-        $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $user, $pass);
-        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    } catch (PDOException $e) {
-        die('❌ Verbindung fehlgeschlagen: ' . $e->getMessage());
+    // Datei prüfen
+    if (!file_exists($sql_file)) {
+        die("❌ Datei '$sql_file' nicht gefunden!");
     }
 
     // Fremdschlüsselprüfung deaktivieren und Tabellen löschen
@@ -28,11 +23,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $pdo->exec("SET FOREIGN_KEY_CHECKS = 1");
     } catch (PDOException $e) {
         die("❌ Fehler beim Löschen der Tabellen: " . $e->getMessage());
-    }
-
-    // Datei prüfen
-    if (!file_exists($sql_file)) {
-        die("❌ Datei '$sql_file' nicht gefunden!");
     }
 
     // Datei einlesen
@@ -53,6 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <!DOCTYPE html>
 <html lang="de">
+
 <head>
     <meta charset="UTF-8">
     <title>Datenbank-Import (Azupedia)</title>
@@ -62,9 +53,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             text-align: center;
             padding: 2rem;
         }
+
         form {
             margin-top: 2rem;
         }
+
         button {
             background-color: #4CAF50;
             color: white;
@@ -74,15 +67,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             cursor: pointer;
             font-size: 1.2rem;
         }
+
         button:hover {
             background-color: #45a049;
         }
+
         .meldung {
             margin-top: 2rem;
             font-weight: bold;
         }
     </style>
 </head>
+
 <body>
 
     <h1>Wiki-Datenbank importieren & überschreiben</h1>
@@ -96,4 +92,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <?php endif; ?>
 
 </body>
+
 </html>

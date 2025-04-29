@@ -1,7 +1,8 @@
 <?php
-session_start();
-require_once "functions/database.php";
-require_once 'functions/utils.php';
+require_once __DIR__  . "/functions/database.php";
+require_once __DIR__  . '/functions/utils.php';
+
+start_session();
 
 $responseData = $_SESSION['responseData'] ?? [];
 unset($_SESSION['responseData']);
@@ -17,7 +18,7 @@ if (!$user) {
 
 $avatar = $user['profile_image_path'] ?? 'default.png';
 
-include 'includes/header.php';
+include __DIR__ . '/includes/header.php';
 ?>
 
 <div class="container my-5">
@@ -46,7 +47,7 @@ include 'includes/header.php';
                     <!-- Nur eigener Account -->
                     <?php if ($profile_user_id == $logged_in_user_id): ?>
                         <!-- Username ändern -->
-                        <form action="actions_user_edit.php" method="POST" class="mb-3">
+                        <form action="actions/actions_user_edit.php" method="POST" class="mb-3">
                             <div class="form-floating mb-2">
                                 <input type="text" class="form-control" id="username" name="username"
                                     value="<?= htmlspecialchars($user['username']) ?>" placeholder="Benutzername">
@@ -58,7 +59,7 @@ include 'includes/header.php';
                         </form>
 
                         <!-- E-Mail ändern -->
-                        <form action="actions_user_edit.php" method="POST" class="mb-3">
+                        <form action="actions/actions_user_edit.php" method="POST" class="mb-3">
                             <div class="form-floating mb-2">
                                 <input type="email" class="form-control" id="email" name="email"
                                     value="<?= htmlspecialchars($user['email']) ?>" placeholder="E-Mail">
@@ -70,7 +71,7 @@ include 'includes/header.php';
                         </form>
 
                         <!-- Avatar hochladen -->
-                        <form action="actions_user_edit.php" method="POST" enctype="multipart/form-data" class="mb-3">
+                        <form action="actions/actions_user_edit.php" method="POST" enctype="multipart/form-data" class="mb-3">
                             <input type="file" name="avatar" class="form-control mb-2" accept="image/*">
                             <button type="submit" name="action" value="upload_avatar" class="btn btn-outline-success w-100">
                                 <i class="fas fa-upload me-1"></i> Avatar hochladen
@@ -82,7 +83,7 @@ include 'includes/header.php';
 
                     <!-- Admin-Löschaktion -->
                     <?php if ($_SESSION['role'] === 'admin' || $_SESSION['user_id'] === $user['id']): ?>
-                        <form method="post" action="actions_admin.php" class="mt-3">
+                        <form method="post" action="actions/actions_admin.php" class="mt-3">
                             <input type="hidden" name="user_id" value="<?= $user['id'] ?>">
                             <button type="submit" name="action" value="delete_user" class="btn btn-danger w-100"
                                 onclick="return confirm('Account wirklich löschen?')">
@@ -96,4 +97,4 @@ include 'includes/header.php';
     </div>
 </div>
 
-<?php include 'includes/footer.php'; ?>
+<?php include __DIR__ . '/includes/footer.php'; ?>

@@ -220,8 +220,8 @@ ALTER TABLE `post_comments`
 --
 ALTER TABLE `post_reactions`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `fk_post_reactions_post_id` (`post_id`),
-  ADD KEY `fk_post_reactions_user_id` (`user_id`);
+  ADD KEY `fk_post_reactions/actions_post_id` (`post_id`),
+  ADD KEY `fk_post_reactions/actions_user_id` (`user_id`);
 
 --
 -- Indexes for table `users`
@@ -334,8 +334,8 @@ ALTER TABLE `post_comments`
 -- Constraints for table `post_reactions`
 --
 ALTER TABLE `post_reactions`
-  ADD CONSTRAINT `fk_post_reactions_post_id` FOREIGN KEY (`post_id`) REFERENCES `posts` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `fk_post_reactions_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+  ADD CONSTRAINT `fk_post_reactions/actions_post_id` FOREIGN KEY (`post_id`) REFERENCES `posts` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `fk_post_reactions/actions_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `user_bookmarks`

@@ -1,8 +1,8 @@
 <?php
-session_start();
+require_once __DIR__ . '/functions/database.php';
+require_once __DIR__ . '/functions/utils.php';
 
-require_once 'functions/database.php';
-require_once 'functions/utils.php';
+start_session();
 
 // Prüfen ob Post-ID übergeben wurde
 if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
@@ -40,7 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $user_id) {
 $reactions = fetch_reaction_counts($pdo, $post_id);
 $userReaction = $user_id ? fetch_user_reaction($pdo, $post_id, $user_id) : null;
 
-include 'includes/header.php';
+include __DIR__ . '/includes/header.php';
 ?>
 
 <div class="container mt-4">
@@ -103,7 +103,7 @@ include 'includes/header.php';
                 <!-- Bookmark -->
                 <?php if ($user_id):
                     $isBookmarked = is_post_bookmarked($pdo, $user_id, $post_id); ?>
-                    <form action="actions_post.php" method="post" class="d-inline">
+                    <form action="actions/actions_post.php" method="post" class="d-inline">
                         <input type="hidden" name="post_id" value="<?= htmlspecialchars($post_id) ?>">
                         <input type="hidden" name="isBookmarked" value="<?= $isBookmarked ? 1 : 0 ?>">
                         <button type="submit" class="btn <?= $isBookmarked ? 'btn-success' : 'btn-outline-info' ?>"
@@ -113,7 +113,7 @@ include 'includes/header.php';
 
                 <!-- Report -->
                 <?php if ($user_id && !is_post_flagged($pdo, $post_id)): ?>
-                    <form action="actions_post.php" method="post" class="d-inline"
+                    <form action="actions/actions_post.php" method="post" class="d-inline"
                         onsubmit="return confirm('Bist du sicher, dass du diesen Beitrag melden möchtest?');">
                         <input type="hidden" name="post_id" value="<?= htmlspecialchars($post_id) ?>">
                         <button type="submit" class="btn btn-outline-danger" name="action" value="flag_post">🚩
@@ -122,7 +122,7 @@ include 'includes/header.php';
                 <?php endif; ?>
 
                 <!-- Edit -->
-                <?php if ($user_id == $post['author_id']): ?>
+                <?php if ($user_id && $user_id == $post['author_id']): ?>
                     <form action="edit_post.php" method="POST" class="d-inline">
                         <input type="hidden" name="post_id" value="<?= htmlspecialchars($post_id) ?>">
                         <button type="submit" class="btn btn-outline-secondary" name="action" value="edit_post">✏️
@@ -131,8 +131,8 @@ include 'includes/header.php';
                 <?php endif; ?>
 
                 <!-- Delete -->
-                <?php if ($user_role === 'admin' || $user_role === 'moderator' || $user_id == $post['author_id']): ?>
-                    <form action="actions_post.php" method="POST"
+                <?php if ($user_role === 'admin' || $user_role === 'moderator' || ($user_id && $user_id == $post['author_id'])): ?>
+                    <form action="actions/actions_post.php" method="POST"
                         onsubmit="return confirm('Are you sure you want to delete this post?');" class="d-inline">
                         <input type="hidden" name="post_id" value="<?= htmlspecialchars($post_id) ?>">
                         <button type="submit" class="btn btn-outline-danger" name="action" value="delete_post">🗑️
@@ -155,7 +155,7 @@ include 'includes/header.php';
             <?php if ($user_id): ?>
                 <div class="mt-4">
                     <h5>Post a Comment</h5>
-                    <form action="actions_post.php" method="POST">
+                    <form action="actions/actions_post.php" method="POST">
                         <textarea name="content" class="form-control" rows="4" placeholder="Write your comment..."
                             required></textarea>
                         <input type="hidden" name="post_id" value="<?= $post_id ?>">
@@ -198,15 +198,9 @@ include 'includes/header.php';
 
                             <div class="d-flex text-muted small ms-auto">
                                 <div class="d-flex"></div>
-                                <!-- Link to this comment -->
-                                <a href="#comment-<?= htmlspecialchars($comment['id']) ?>"
-                                    class="btn btn-sm btn-outline-secondary">
-                                    Link
-                                </a>
-
                                 <!-- Report Button -->
-                                <?php if (!is_comment_flagged($pdo, $comment['id'])): ?>
-                                    <form action="actions_post.php" method="POST" class="d-inline">
+                                <?php if ($user_id && !is_comment_flagged($pdo, $comment['id'])): ?>
+                                    <form action="actions/actions_post.php" method="POST" class="d-inline">
                                         <input type="hidden" name="comment_id" value="<?= htmlspecialchars($comment['id']) ?>">
                                         <button type="submit" name="action" value="flag_comment" class="btn btn-sm btn-warning">
                                             Report
@@ -219,7 +213,7 @@ include 'includes/header.php';
                                     ($user_id && $comment['author_id'] == $user_id) ||
                                     ($user_role === 'admin' || $user_role === 'moderator')
                                 ): ?>
-                                    <form action="actions_post.php" method="POST" class="d-inline"
+                                    <form action="actions/actions_post.php" method="POST" class="d-inline"
                                         onsubmit="return confirm('Are you sure you want to delete this comment?');">
                                         <input type="hidden" name="comment_id" value="<?= htmlspecialchars($comment['id']) ?>">
                                         <button type="submit" name="action" value="delete_comment" class="btn btn-sm btn-danger">
@@ -265,4 +259,4 @@ include 'includes/header.php';
     });
 </script>
 
-<?php include 'includes/footer.php'; ?>
+<?php include __DIR__ . '/includes/footer.php'; ?>

@@ -2,10 +2,10 @@
 
 // @jonathan - Might convert this to classes later
 
-require_once 'utils.php';
+require_once __DIR__ . '/utils.php';
 
-$envFile = file_exists('.env.development') ? '.env.development' : '.env';
-loadEnv($envFile);
+$envPath = realpath(__DIR__ . '/../.env.development') ?: realpath(__DIR__ . '/../.env');
+loadEnv($envPath);
 
 try {
     $db = getenv('DB_NAME');

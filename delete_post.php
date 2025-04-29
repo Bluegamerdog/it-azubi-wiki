@@ -1,6 +1,7 @@
 <?php
-session_start();
-require_once 'functions/database.php';   // PDO-Verbindung
+require_once __DIR__  . '/functions/database.php';   // PDO-Verbindung
+require_once __DIR__  . "/functions/utils.php";
+start_session();
 
 // Zugriff prüfen (nur Administratoren)
 if (!isset($_SESSION["username"])) {

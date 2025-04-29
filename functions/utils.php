@@ -1,6 +1,6 @@
 <?php
 
-require_once 'functions/database.php';
+require_once __DIR__ . '/database.php';
 
 
 function loadEnv($path)
@@ -25,11 +25,16 @@ function loadEnv($path)
     }
 }
 
-function verifyLoginState(PDO $pdo): bool
+function start_session()
 {
     if (session_status() !== PHP_SESSION_ACTIVE) {
         session_start();
     }
+}
+
+function verifyLoginState(PDO $pdo): bool
+{
+    start_session();
 
     if (!isset($_SESSION['user_id'])) {
         return false;
