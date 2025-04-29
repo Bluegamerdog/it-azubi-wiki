@@ -19,8 +19,8 @@ if (!$post) {
 
 $author = isset($post['author_id']) && is_numeric($post['author_id']) ? fetch_user($pdo, $post['author_id']) : null;
 
-$user_id = $_SESSION['user_id'] ?? null;
-$user_role = $_SESSION['role'] ?? null; // Get the user's role from session
+$user_id = (int) $_SESSION['user_id'] ?? null;
+$user_role = (string) $_SESSION['role'] ?? null;
 
 // Reaktion verarbeiten (nur wenn User eingeloggt ist)
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && $user_id) {
@@ -82,59 +82,74 @@ include 'includes/header.php';
 
             <hr class="border-body-subtle my-3">
 
-            <!-- Reaction Buttons (Upvote, Downvote, etc.) -->
-            <div class="d-flex mt-4">
-                <form action="read_forum_post.php?id=<?= $post_id ?>" method="POST" class="d-inline">
-                    <input type="hidden" name="action" value="reaction">
-                    <input type="hidden" name="post_id" value="<?= $post_id ?>">
-                    <button class="btn <?= $userReaction === 'upvote' ? 'btn-success' : 'btn-outline-success' ?>"
-                        type="submit" name="reaction" value="upvote" <?= $user_id ? '' : 'disabled' ?>>
-                        👍 <?= $reactions['upvote'] ?>
-                    </button>
-                    <button class="btn <?= $userReaction === 'downvote' ? 'btn-danger' : 'btn-outline-danger' ?>"
-                        type="submit" name="reaction" value="downvote" <?= $user_id ? '' : 'disabled' ?>>
-                        👎 <?= $reactions['downvote'] ?>
-                    </button>
-                </form>
+            <div class="d-flex flex-wrap gap-2 mt-4">
 
-                <!-- Show bookmark button for logged in users -->
+                <!-- Reactions -->
+                <div class="btn-group" role="group" aria-label="Reaction buttons">
+                    <form action="read_forum_post.php?id=<?= $post_id ?>" method="POST" class="d-inline">
+                        <input type="hidden" name="action" value="reaction">
+                        <input type="hidden" name="post_id" value="<?= $post_id ?>">
+                        <button class="btn <?= $userReaction === 'upvote' ? 'btn-success' : 'btn-outline-success' ?>"
+                            type="submit" name="reaction" value="upvote" <?= $user_id ? '' : 'disabled' ?>>
+                            👍 <?= $reactions['upvote'] ?>
+                        </button>
+                        <button class="btn <?= $userReaction === 'downvote' ? 'btn-danger' : 'btn-outline-danger' ?>"
+                            type="submit" name="reaction" value="downvote" <?= $user_id ? '' : 'disabled' ?>>
+                            👎 <?= $reactions['downvote'] ?>
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Bookmark -->
                 <?php if ($user_id):
                     $isBookmarked = is_post_bookmarked($pdo, $user_id, $post_id); ?>
-                    <form action="actions_post.php" method="post" class="d-inline ms-2">
+                    <form action="actions_post.php" method="post" class="d-inline">
                         <input type="hidden" name="post_id" value="<?= htmlspecialchars($post_id) ?>">
                         <input type="hidden" name="isBookmarked" value="<?= $isBookmarked ? 1 : 0 ?>">
-                        <button type="submit" class="btn <?= $isBookmarked ? 'btn-success' : 'btn-info' ?>" name="action"
-                            value="bookmark_post">Lesezeichen</button>
+                        <button type="submit" class="btn <?= $isBookmarked ? 'btn-success' : 'btn-outline-info' ?>"
+                            name="action" value="bookmark_post">📌 Lesezeichen</button>
                     </form>
                 <?php endif; ?>
 
-                <!-- Show report button -->
+                <!-- Report -->
                 <?php if ($user_id && !is_post_flagged($pdo, $post_id)): ?>
-                    <form action="actions_post.php" method="post" class="d-inline ms-2"
+                    <form action="actions_post.php" method="post" class="d-inline"
                         onsubmit="return confirm('Bist du sicher, dass du diesen Beitrag melden möchtest?');">
                         <input type="hidden" name="post_id" value="<?= htmlspecialchars($post_id) ?>">
-                        <button type="submit" class="btn btn-danger" name="action" value="flag_post">Report</button>
+                        <button type="submit" class="btn btn-outline-danger" name="action" value="flag_post">🚩
+                            Melden</button>
                     </form>
                 <?php endif; ?>
 
-                <!-- Show delete button for admins and moderators -->
-                <?php if ($user_role === 'admin' || $user_role === 'moderator'): ?>
+                <!-- Edit -->
+                <?php if ($user_id === $post['author_id']): ?>
+                    <form action="edit_post.php" method="POST" class="d-inline">
+                        <input type="hidden" name="post_id" value="<?= htmlspecialchars($post_id) ?>">
+                        <button type="submit" class="btn btn-outline-secondary" name="action" value="edit_post">✏️
+                            Bearbeiten</button>
+                    </form>
+                <?php endif; ?>
+
+                <!-- Delete -->
+                <?php if ($user_role === 'admin' || $user_role === 'moderator' || $user_id === $post['author_id']): ?>
                     <form action="actions_post.php" method="POST"
-                        onsubmit="return confirm('Are you sure you want to delete this post?');" class="d-inline ms-2">
+                        onsubmit="return confirm('Are you sure you want to delete this post?');" class="d-inline">
                         <input type="hidden" name="post_id" value="<?= htmlspecialchars($post_id) ?>">
-                        <button type="submit" class="btn btn-danger" name="action" value="delete_post">Delete
-                            Post</button>
+                        <button type="submit" class="btn btn-outline-danger" name="action" value="delete_post">🗑️
+                            Löschen</button>
                     </form>
-
-                    <form action="submit_wiki.php?id=<?= $post_id ?>" method="POST" onsubmit="return confirm('');"
-                        class="d-inline ms-2">
-                        <input type="hidden" name="post_id" value="<?= htmlspecialchars($post_id) ?>">
-                        <button class="wiki-submit-btn btn btn-warning" data-post-id="<?= $post_id ?>">Wiki
-                            Submission</button>
-                    </form>
-
                 <?php endif; ?>
+
+                <!-- Wiki Submission -->
+                <?php if ($user_role === 'admin' || $user_role === 'moderator'): ?>
+                    <form action="submit_wiki.php?id=<?= $post_id ?>" method="POST" class="d-inline">
+                        <input type="hidden" name="post_id" value="<?= htmlspecialchars($post_id) ?>">
+                        <button class="btn btn-outline-warning wiki-submit-btn">📚 Wiki Submission</button>
+                    </form>
+                <?php endif; ?>
+
             </div>
+
 
             <!-- Comment Form -->
             <?php if ($user_id): ?>

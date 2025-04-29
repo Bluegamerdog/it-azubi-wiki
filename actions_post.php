@@ -10,7 +10,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit('NO ACTION');
     }
 
-    $user_id = $_SESSION['user_id'] ?? null;
+    $user_id = (int) $_SESSION['user_id'] ?? null;
 
     if (!isset($user_id)) {
         exit('Unverified');
@@ -79,6 +79,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // You do not have permission to delete this post.
             exit('Unauthorized');
         }
+    } elseif ($action === 'edit_post' && isset($_POST['post_id']) && isset($_POST["title"]) && isset($_POST["content"])) {
+        $post = fetch_post($pdo, $_POST['post_id']);
+        if (!$post) {
+            exit('Post not found.');
+        }
+        if ($post['author_id'] !== $user_id) {
+            // You do not have permission to edit this post.
+            exit('Unauthorized');
+        }
+        update_post($pdo, $_POST['post_id'], $_POST["title"], $_POST["content"]);
+
+        header("Location: read_forum_post.php?id=" . $_POST['post_id']);
+        exit;
     } elseif ($action === 'reaction' && isset($_POST['post_id']) && isset($_POST['reaction']) && in_array($_POST['reaction'], ['upvote', 'downvote'])) {
         $post = fetch_post($pdo, $_POST['post_id']);
         if (!$post) {
