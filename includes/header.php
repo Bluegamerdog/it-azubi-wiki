@@ -183,7 +183,7 @@ verifyLoginState($pdo);
                         <?php foreach (fetch_user_bookmarks($pdo, $_SESSION['user_id']) as $bookmarkedPost): ?>
                             <li class="nav-item border-bottom border-body-subtle">
                                 <a href=<?= "read_forum_post.php?id=" . $bookmarkedPost['id'] ?>
-                                    class="nav-link text-body py-1">Post
+                                    class="nav-link text-body py-1">
                                     <?= nl2br(htmlspecialchars(substr($bookmarkedPost['content'], 0, 15))) . (strlen($bookmarkedPost['content']) > 15 ? '...' : '') ?></a>
                             </li>
                         <?php endforeach; ?>
