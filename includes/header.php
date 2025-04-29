@@ -1,6 +1,8 @@
 <?php
 require_once "functions/database.php";
 require_once "functions/utils.php";
+
+verifyLoginState($pdo);
 ?>
 
 <!DOCTYPE html>

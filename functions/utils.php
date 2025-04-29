@@ -1,6 +1,6 @@
 <?php
 
-require_once 'database.php';
+require_once 'functions/database.php';
 
 
 function loadEnv($path)
@@ -24,6 +24,28 @@ function loadEnv($path)
         $_ENV[$key] = $value;
     }
 }
+
+function verifyLoginState(PDO $pdo): bool
+{
+    if (session_status() !== PHP_SESSION_ACTIVE) {
+        session_start();
+    }
+
+    if (!isset($_SESSION['user_id'])) {
+        return false;
+    }
+
+    $user = fetch_user($pdo, $_SESSION['user_id']);
+    if (!$user) {
+        session_unset();
+        session_destroy();
+        header("Location: login.php");
+        return false;
+    }
+
+    return true;
+}
+
 
 function time_ago(string $timestamp, $lowercaseVor = false): string
 {

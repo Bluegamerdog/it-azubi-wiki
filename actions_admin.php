@@ -11,6 +11,20 @@ $permissionsTable = [
     'unflag_post' => ['admin', 'moderator'],
 ];
 
+function canPerformAction($action, $userRole, $userId, $targetUserId = null)
+{
+    global $permissionsTable;
+
+    $allowedRoles = $permissionsTable[$action] ?? [];
+
+    // Special case: allow users to delete themselves
+    if ($action === 'delete_user' && $userId === $targetUserId) {
+        return true;
+    }
+
+    return in_array($userRole, $allowedRoles);
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Check permissions
     $action = $_POST['action'] ?? null;
@@ -30,7 +44,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         echo 'Unverified.';
         exit;
     }
-    if (!in_array($user_role, $permissionSet)) {
+
+    $targetUserId = (int) $_POST['user_id'] ?? null;
+    if (!canPerformAction($action, $user_role, $user_id, $targetUserId)) {
         echo 'Unauthorized.';
         exit;
     }
@@ -38,18 +54,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Handle Action
     if ($action === 'promote_moderator' && isset($_POST['user_id'])) {
         update_user($pdo, $_POST['user_id'], ['role' => 'moderator']);
-        echo 'PROMOTED';
         header("Location: " . $_SERVER['HTTP_REFERER']);
         exit;
     } elseif ($action === 'demote_moderator' && isset($_POST['user_id'])) {
         update_user($pdo, $_POST['user_id'], ['role' => 'user']);
-        echo 'DEMOTED';
         header("Location: " . $_SERVER['HTTP_REFERER']);
         exit;
     } elseif ($action === 'delete_user' && isset($_POST['user_id'])) {
-        echo 'DELETED';
         delete_user($pdo, $_POST['user_id']);
-        header("Location: " . $_SERVER['HTTP_REFERER']);
+        if ($user_id === $targetUserId) {
+            session_unset();
+            session_destroy();
+            header("Location: login.php");
+        } else {
+            header("Location: " . $_SERVER['HTTP_REFERER']);
+        }
+
         exit;
     } elseif ($action === 'unflag_comment' && isset($_POST['comment_id'])) {
         unflag_comment($pdo, $_POST['comment_id']);
