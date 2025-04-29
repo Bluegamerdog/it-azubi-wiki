@@ -70,13 +70,41 @@ include 'includes/header.php';
             <table class="table table-bordered">
                 <thead>
                     <tr>
-                        <th>Benutzername</th>
-                        <th>Rolle</th>
+                        <th>Post Inhalt</th>
+                        <th>Author des Posts</th>
+                        <th>Gemeldet Von</th>
                         <th>Aktionen</th>
                     </tr>
                 </thead>
                 <tbody>
+                    <?php
+                    // Fetch flagged comments from the database
+                    $flagged_posts = fetch_flagged_posts($pdo);
+                    foreach ($flagged_posts as $flagged_post):
+                        $reportingUser = fetch_user($pdo, $flagged_post['flagged_by']);
+                        $reportedPost = fetch_post($pdo, $flagged_post['post_id']);
+                        $reportedUser = fetch_user($pdo, $reportedPost['author_id']);
+                        ?>
+                        <tr>
 
+                            <td><a href=<?= "read_forum_post.php?id=" . $reportedPost['id'] ?>><?= htmlspecialchars($reportedPost['content']) ?></a></td>
+                            <td><a href=<?= "profile.php?id=" . $reportedUser['id'] ?>><?= htmlspecialchars($reportedUser['username']) ?></a>
+                            <td><a href=<?= "profile.php?id=" . $reportingUser['id'] ?>><?= htmlspecialchars($reportingUser['username']) ?></a>
+                            </td>
+                            <td>
+                                <form method="post" action="actions_admin.php" class="d-inline">
+                                    <input type="hidden" name="post_id" value="<?= $reportedPost['id'] ?>">
+                                    <button type="submit" name="action" value="unflag_post" class="btn btn-sm btn-success"
+                                        onclick="return confirm('Post wirklich entflaggen?')">Entflaggen</button>
+                                </form>
+                                <form method="post" action="actions_post.php" class="d-inline">
+                                    <input type="hidden" name="post_id" value="<?= $reportedPost['id'] ?>">
+                                    <button type="submit" name="action" value="delete_post" class="btn btn-sm btn-danger"
+                                        onclick="return confirm('Post wirklich lösen?')">Löschen</button>
+                                </form>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
                 </tbody>
             </table>
         </div>
@@ -100,7 +128,7 @@ include 'includes/header.php';
                         $reportingUser = fetch_user($pdo, $comment['flagged_by']);
                         $reportedComment = fetch_comment($pdo, $comment['comment_id']);
                         $reportedUser = fetch_user($pdo, $reportedComment['author_id']);
-                            ?>
+                        ?>
                         <tr>
 
                             <td><a href=<?= "read_forum_post.php?id=" . $reportedComment['post_id'] . "#comment-" . $reportedComment['id'] ?>><?= htmlspecialchars($reportedComment['content']) ?></a></td>
@@ -116,8 +144,7 @@ include 'includes/header.php';
                                 </form>
                                 <form method="post" action="actions_post.php" class="d-inline">
                                     <input type="hidden" name="comment_id" value="<?= $comment['comment_id'] ?>">
-                                    <button type="submit" name="action" value="delete_comment"
-                                        class="btn btn-sm btn-danger"
+                                    <button type="submit" name="action" value="delete_comment" class="btn btn-sm btn-danger"
                                         onclick="return confirm('Kommentar wirklich lösen?')">Löschen</button>
                                 </form>
                             </td>
