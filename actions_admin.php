@@ -29,26 +29,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Check permissions
     $action = $_POST['action'] ?? null;
     if (!$action) {
-        echo 'NO ACTION';
-        exit;
+        exit("NO ACTION");
     }
     $permissionSet = $permissionsTable[$action] ?? null;
     if (!$permissionSet) {
-        echo 'NO PERMISSIONS SET UP FOR ACTION';
-        exit;
+        exit('NO PERMISSIONS SET UP FOR ACTION');
     }
 
     $user_id = $_SESSION['user_id'] ?? null;
     $user_role = $_SESSION['role'] ?? null;
     if (!isset($user_id) || !isset($user_role)) {
-        echo 'Unverified.';
-        exit;
+        exit('Unverified.');
     }
 
     $targetUserId = (int) $_POST['user_id'] ?? null;
     if (!canPerformAction($action, $user_role, $user_id, $targetUserId)) {
-        echo 'Unauthorized.';
-        exit;
+        exit('Unauthorized.');
     }
 
     // Handle Action
@@ -69,7 +65,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             header("Location: " . $_SERVER['HTTP_REFERER']);
         }
-
         exit;
     } elseif ($action === 'unflag_comment' && isset($_POST['comment_id'])) {
         unflag_comment($pdo, $_POST['comment_id']);
@@ -82,8 +77,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 } else {
     // Handle case where no POST request is made (e.g., direct access)
-    echo 'Invalid request method.';
-    exit;
+    exit('Invalid request method.');
 }
 
 
