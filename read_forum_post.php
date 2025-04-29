@@ -19,8 +19,8 @@ if (!$post) {
 
 $author = isset($post['author_id']) && is_numeric($post['author_id']) ? fetch_user($pdo, $post['author_id']) : null;
 
-$user_id = (int) $_SESSION['user_id'] ?? null;
-$user_role = (string) $_SESSION['role'] ?? null;
+$user_id = $_SESSION['user_id'] ?? null;
+$user_role = $_SESSION['role'] ?? null;
 
 // Reaktion verarbeiten (nur wenn User eingeloggt ist)
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && $user_id) {
@@ -122,7 +122,7 @@ include 'includes/header.php';
                 <?php endif; ?>
 
                 <!-- Edit -->
-                <?php if ($user_id === $post['author_id']): ?>
+                <?php if ($user_id == $post['author_id']): ?>
                     <form action="edit_post.php" method="POST" class="d-inline">
                         <input type="hidden" name="post_id" value="<?= htmlspecialchars($post_id) ?>">
                         <button type="submit" class="btn btn-outline-secondary" name="action" value="edit_post">✏️
@@ -131,7 +131,7 @@ include 'includes/header.php';
                 <?php endif; ?>
 
                 <!-- Delete -->
-                <?php if ($user_role === 'admin' || $user_role === 'moderator' || $user_id === $post['author_id']): ?>
+                <?php if ($user_role === 'admin' || $user_role === 'moderator' || $user_id == $post['author_id']): ?>
                     <form action="actions_post.php" method="POST"
                         onsubmit="return confirm('Are you sure you want to delete this post?');" class="d-inline">
                         <input type="hidden" name="post_id" value="<?= htmlspecialchars($post_id) ?>">

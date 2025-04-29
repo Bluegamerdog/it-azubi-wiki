@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 29, 2025 at 10:25 AM
+-- Generation Time: Apr 29, 2025 at 01:22 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -70,8 +70,8 @@ CREATE TABLE `posts` (
 --
 
 INSERT INTO `posts` (`id`, `author_id`, `title`, `content`, `created_at`, `updated_at`, `is_wiki_entry`, `wiki_category_id`, `answer_comment_id`) VALUES
-(1, 1, 'Root User Test Post | Title Here', 'Root User Test Post - Content Here', '2025-04-23 09:27:45', '2025-04-28 12:58:40', 1, NULL, NULL),
-(2, NULL, 'Deleted User Test Post', 'Deleted User Test Post Deleted User Test Post Deleted User Test Post Deleted User Test Post Deleted User Test Post', '2025-04-25 09:04:07', '2025-04-28 12:57:47', 1, NULL, NULL);
+(1, 1, 'Test Post Title', 'Test Post Content', '2025-04-23 09:27:45', '2025-04-29 13:20:50', 1, NULL, NULL),
+(2, NULL, 'Deleted User Test Post', 'This is a test post for when a post author was deleted', '2025-04-25 09:04:07', '2025-04-28 12:57:47', 0, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -136,7 +136,7 @@ CREATE TABLE `users` (
 
 INSERT INTO `users` (`id`, `role`, `username`, `email`, `password`, `created_at`, `profile_image_path`) VALUES
 (1, 'admin', 'root', 'root@gmail.com', '$2y$10$JHZnCkPblwnmGPo5i3VoL./qsi45ebi5E7KHLYliJbH5vmi/rx/Lu', '2025-04-25 15:12:41', 'uploads/user_avatars/default.png'),
-(2, 'user', 'jonathan', 'jonathan@gmail.com', '$2y$10$8JyuUIYWjhqV.pgBA3MzFOr14VnNYsbK3CAoeu0piagbPUz9c966i', '2025-04-25 12:06:32', 'uploads/user_avatars/default.png');
+(2, 'moderator', 'jonathan', 'jonathan@gmail.com', '$2y$10$8JyuUIYWjhqV.pgBA3MzFOr14VnNYsbK3CAoeu0piagbPUz9c966i', '2025-04-25 12:06:32', 'uploads/user_avatars/default.png');
 
 -- --------------------------------------------------------
 
