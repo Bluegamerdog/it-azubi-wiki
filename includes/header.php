@@ -1,6 +1,6 @@
 <?php
-require_once __DIR__  . "/../functions/database.php";
-require_once __DIR__  . "/../functions/utils.php";
+require_once __DIR__ . "/../functions/database.php";
+require_once __DIR__ . "/../functions/utils.php";
 
 verifyLoginState($pdo);
 ?>
@@ -107,6 +107,13 @@ verifyLoginState($pdo);
         [data-bs-theme="dark"] .nav-link {
             color: #ccc;
         }
+
+        .flex-wrapper {
+            display: flex;
+            min-height: 100vh;
+            flex-direction: column;
+            justify-content: space-between;
+        }
     </style>
 
 </head>
@@ -182,8 +189,7 @@ verifyLoginState($pdo);
                     <ul class="nav flex-column">
                         <?php foreach (fetch_user_bookmarks($pdo, $_SESSION['user_id']) as $bookmarkedPost): ?>
                             <li class="nav-item border-bottom border-body-subtle">
-                                <a href=<?= "read_forum_post.php?id=" . $bookmarkedPost['id'] ?>
-                                    class="nav-link text-body py-1">
+                                <a href=<?= "read_forum_post.php?id=" . $bookmarkedPost['id'] ?> class="nav-link text-body py-1">
                                     <?= nl2br(htmlspecialchars(substr($bookmarkedPost['content'], 0, 15))) . (strlen($bookmarkedPost['content']) > 15 ? '...' : '') ?></a>
                             </li>
                         <?php endforeach; ?>
@@ -198,5 +204,5 @@ verifyLoginState($pdo);
 
 
 
-        <main class="main-content flex-grow-1">
+        <main class="main-content flex-grow-1 flex-wrapper">
             <div class="container mt-4">
