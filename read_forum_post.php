@@ -17,6 +17,7 @@ if (!$post) {
     exit('Post with ID ' . $post_id . ' not found!');
 }
 
+$answerComment = fetch_answer_comment_by_post($pdo, $post['id']);
 $author = isset($post['author_id']) && is_numeric($post['author_id']) ? fetch_user($pdo, $post['author_id']) : null;
 
 $user_id = $_SESSION['user_id'] ?? null;
@@ -80,10 +81,28 @@ include __DIR__ . '/includes/header.php';
                 <p><?= nl2br(htmlspecialchars($post["content"])) ?></p>
             </div>
 
+            <?php if ($answerComment):
+                $answerAuthor = fetch_user($pdo, $answerComment['author_id']); ?>
+                <hr class="border-body-subtle my-3">
+                <div class="mt-4 p-4 bg-success-subtle border border-success rounded">
+                    <div class="d-flex align-items-center mb-2">
+                        <img src="<?= htmlspecialchars($answerAuthor['profile_image_path'] ?? 'uploads/user_avatars/default.png') ?>"
+                            alt="Answer Author" class="rounded-circle me-2" style="width: 30px; height: 30px; object-fit: cover;">
+                        <div>
+                            <strong>
+                                <a href="profile.php?id=<?= htmlspecialchars($answerAuthor['id']) ?>" class="text-decoration-none text-success-emphasis">
+                                    <?= htmlspecialchars($answerAuthor['username']) ?>
+                                </a>
+                            </strong>
+                            <small class="text-muted ms-1">(<?= time_ago($answerComment['created_at']) ?> als lösung markiert)</small>
+                        </div>
+                    </div>
+                    <p class="mb-0"><?= nl2br(htmlspecialchars($answerComment["content"])) ?></p>
+                </div>
+            <?php endif ?>
             <hr class="border-body-subtle my-3">
 
             <div class="d-flex flex-wrap gap-2 mt-4">
-
                 <!-- Reactions -->
                 <div class="btn-group" role="group" aria-label="Reaction buttons">
                     <form action="read_forum_post.php?id=<?= $post_id ?>" method="POST" class="d-inline">
@@ -178,7 +197,7 @@ include __DIR__ . '/includes/header.php';
                 if ($comments):
                     foreach ($comments as $comment):
                         $commentAuthor = fetch_user($pdo, $comment['author_id']);
-                        ?>
+                ?>
                         <div id="comment-<?= htmlspecialchars($comment['id']) ?>"
                             class="mt-3 p-3 border rounded position-relative">
                             <div class="d-flex align-items-center mb-2">
@@ -216,10 +235,27 @@ include __DIR__ . '/includes/header.php';
                                     <form action="actions/actions_post.php" method="POST" class="d-inline"
                                         onsubmit="return confirm('Are you sure you want to delete this comment?');">
                                         <input type="hidden" name="comment_id" value="<?= htmlspecialchars($comment['id']) ?>">
-                                        <button type="submit" name="action" value="delete_comment" class="btn btn-sm btn-danger">
+                                        <button type="submit" name="action" value="delete_comment" class="btn btn-sm btn-danger ms-2">
                                             Delete
                                         </button>
                                     </form>
+                                <?php endif; ?>
+
+                                <!-- ✅ Mark as Answer Button -->
+                                <?php if ($answerComment && $answerComment['id'] !== $comment['id'] && $user_id && ($post['author_id'] === $user_id || $user_role === 'admin' || $user_role === 'moderator')): ?>
+                                    <form action="actions/actions_post.php" method="POST" class="d-inline">
+                                        <input type="hidden" name="action" value="mark_answer">
+                                        <input type="hidden" name="comment_id" value="<?= htmlspecialchars($comment['id']) ?>">
+                                        <input type="hidden" name="post_id" value="<?= $post_id ?>">
+                                        <button type="submit" class="btn btn-sm btn-outline-success ms-2">
+                                            ✅ Mark as Answer
+                                        </button>
+                                    </form>
+                                <?php endif; ?>
+
+                                <!-- ✅ Answer Badge -->
+                                <?php if ($answerComment && $answerComment['id'] === $comment['id']): ?>
+                                    <button type="submit" class="btn btn-sm btn-success ms-2">✅ Answer</button>
                                 <?php endif; ?>
                             </div>
                         </div>
@@ -252,7 +288,7 @@ include __DIR__ . '/includes/header.php';
 
 <script>
     document.querySelectorAll('.wiki-submit-btn').forEach(button => {
-        button.addEventListener('click', function () {
+        button.addEventListener('click', function() {
             document.getElementById('wiki-form').style.display = 'block';
             document.getElementById('wiki-post-id').value = this.getAttribute('data-post-id');
         });

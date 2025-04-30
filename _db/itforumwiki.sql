@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 29, 2025 at 01:22 PM
+-- Generation Time: Apr 30, 2025 at 12:21 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -61,17 +61,16 @@ CREATE TABLE `posts` (
   `created_at` datetime NOT NULL DEFAULT current_timestamp(),
   `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `is_wiki_entry` tinyint(1) NOT NULL DEFAULT 0,
-  `wiki_category_id` int(11) DEFAULT NULL,
-  `answer_comment_id` int(11) DEFAULT NULL
+  `wiki_category_id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `posts`
 --
 
-INSERT INTO `posts` (`id`, `author_id`, `title`, `content`, `created_at`, `updated_at`, `is_wiki_entry`, `wiki_category_id`, `answer_comment_id`) VALUES
-(1, 1, 'Test Post Title', 'Test Post Content', '2025-04-23 09:27:45', '2025-04-29 13:20:50', 1, NULL, NULL),
-(2, NULL, 'Deleted User Test Post', 'This is a test post for when a post author was deleted', '2025-04-25 09:04:07', '2025-04-28 12:57:47', 0, NULL, NULL);
+INSERT INTO `posts` (`id`, `author_id`, `title`, `content`, `created_at`, `updated_at`, `is_wiki_entry`, `wiki_category_id`) VALUES
+(1, 1, 'Test Post Title', 'Test Post Content', '2025-04-23 09:27:45', '2025-04-29 14:15:20', 1, NULL),
+(2, NULL, 'Deleted User Test Post', 'This is a test post for when a post author was deleted', '2025-04-25 09:04:07', '2025-04-29 13:25:01', 0, NULL);
 
 -- --------------------------------------------------------
 
@@ -84,6 +83,7 @@ CREATE TABLE `post_comments` (
   `post_id` int(11) NOT NULL,
   `author_id` int(11) DEFAULT NULL,
   `content` text NOT NULL,
+  `is_answer` tinyint(1) NOT NULL,
   `created_at` datetime NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -91,8 +91,9 @@ CREATE TABLE `post_comments` (
 -- Dumping data for table `post_comments`
 --
 
-INSERT INTO `post_comments` (`id`, `post_id`, `author_id`, `content`, `created_at`) VALUES
-(1, 1, 1, 'Test Comment', '2025-04-23 09:32:32');
+INSERT INTO `post_comments` (`id`, `post_id`, `author_id`, `content`, `is_answer`, `created_at`) VALUES
+(1, 1, 1, 'Test Comment', 0, '2025-04-23 09:32:32'),
+(2, 1, 1, 'test answer comment', 1, '2025-04-30 12:10:06');
 
 -- --------------------------------------------------------
 
@@ -112,7 +113,7 @@ CREATE TABLE `post_reactions` (
 --
 
 INSERT INTO `post_reactions` (`id`, `post_id`, `user_id`, `reaction_type`) VALUES
-(1, 2, 1, 'downvote');
+(1, 2, 1, 'upvote');
 
 -- --------------------------------------------------------
 
@@ -136,7 +137,10 @@ CREATE TABLE `users` (
 
 INSERT INTO `users` (`id`, `role`, `username`, `email`, `password`, `created_at`, `profile_image_path`) VALUES
 (1, 'admin', 'root', 'root@gmail.com', '$2y$10$JHZnCkPblwnmGPo5i3VoL./qsi45ebi5E7KHLYliJbH5vmi/rx/Lu', '2025-04-25 15:12:41', 'uploads/user_avatars/default.png'),
-(2, 'moderator', 'jonathan', 'jonathan@gmail.com', '$2y$10$8JyuUIYWjhqV.pgBA3MzFOr14VnNYsbK3CAoeu0piagbPUz9c966i', '2025-04-25 12:06:32', 'uploads/user_avatars/default.png');
+(2, 'admin', 'admin', 'admin@gmail.com', '$2y$10$a3LLh2dOqeeeAOng9lfzTuoGtDYr3v7HvP1DUaF5//NrP354wwRB2', '2025-04-30 12:15:49', 'uploads/user_avatars/default.png'),
+(3, 'moderator', 'moderator', 'moderator@gmail.com', '$2y$10$swWkzVWavC2vk3tPL3ZfzOEk5LKMQEkx2coYUj3xv4S3CB/eF9CL6', '2025-04-30 12:15:16', 'uploads/user_avatars/default.png'),
+(4, 'user', 'user', 'user@gmail.com', '$2y$10$D9WL2nz1DigxENS1ZeRTguzD03Fk0DR2L7rMljGUFwzjdHwo/b8Yi', '2025-04-30 12:16:09', 'uploads/user_avatars/default.png'),
+(5, 'user', 'jonathan', 'jonathan@gmail.com', '$2y$10$8JyuUIYWjhqV.pgBA3MzFOr14VnNYsbK3CAoeu0piagbPUz9c966i', '2025-04-25 12:06:32', 'uploads/user_avatars/default.png');
 
 -- --------------------------------------------------------
 
@@ -204,8 +208,7 @@ ALTER TABLE `flagged_posts`
 ALTER TABLE `posts`
   ADD PRIMARY KEY (`id`),
   ADD KEY `fk_posts_author_id` (`author_id`),
-  ADD KEY `fk_posts_wiki_category_id` (`wiki_category_id`),
-  ADD KEY `fk_posts_wiki_answer_comment_id` (`answer_comment_id`);
+  ADD KEY `fk_posts_wiki_category_id` (`wiki_category_id`);
 
 --
 -- Indexes for table `post_comments`
@@ -220,8 +223,8 @@ ALTER TABLE `post_comments`
 --
 ALTER TABLE `post_reactions`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `fk_post_reactions/actions_post_id` (`post_id`),
-  ADD KEY `fk_post_reactions/actions_user_id` (`user_id`);
+  ADD KEY `fk_post_reactions_post_id` (`post_id`),
+  ADD KEY `fk_post_reactions_user_id` (`user_id`);
 
 --
 -- Indexes for table `users`
@@ -271,7 +274,7 @@ ALTER TABLE `posts`
 -- AUTO_INCREMENT for table `post_comments`
 --
 ALTER TABLE `post_comments`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `post_reactions`
@@ -283,7 +286,7 @@ ALTER TABLE `post_reactions`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `user_bookmarks`
@@ -320,7 +323,6 @@ ALTER TABLE `flagged_posts`
 --
 ALTER TABLE `posts`
   ADD CONSTRAINT `fk_posts_author_id` FOREIGN KEY (`author_id`) REFERENCES `users` (`id`) ON DELETE SET NULL,
-  ADD CONSTRAINT `fk_posts_wiki_answer_comment_id` FOREIGN KEY (`answer_comment_id`) REFERENCES `post_comments` (`id`) ON DELETE SET NULL,
   ADD CONSTRAINT `fk_posts_wiki_category_id` FOREIGN KEY (`wiki_category_id`) REFERENCES `wiki_categories` (`id`) ON DELETE SET NULL;
 
 --
@@ -334,8 +336,8 @@ ALTER TABLE `post_comments`
 -- Constraints for table `post_reactions`
 --
 ALTER TABLE `post_reactions`
-  ADD CONSTRAINT `fk_post_reactions/actions_post_id` FOREIGN KEY (`post_id`) REFERENCES `posts` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `fk_post_reactions/actions_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+  ADD CONSTRAINT `fk_post_reactions_post_id` FOREIGN KEY (`post_id`) REFERENCES `posts` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `fk_post_reactions_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `user_bookmarks`

@@ -164,7 +164,6 @@ function fetch_all_wiki_posts(PDO $pdo, $sorted_by = 'newest', $days_old = 'all'
             $whereClause .= " AND wiki_category_id = :wiki_category_id";
             $params['wiki_category_id'] = $category_id;
             break;
-
     }
 
     // Sorting logic
@@ -182,7 +181,6 @@ function fetch_all_wiki_posts(PDO $pdo, $sorted_by = 'newest', $days_old = 'all'
     $stmt->execute($params);
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
-
 
 function fetch_posts_by_user(PDO $pdo, int|string $author_id): array
 {
@@ -357,11 +355,34 @@ function flag_comment(PDO $pdo, int|string $comment_id, int|string $flagged_by):
     ]);
 }
 
-
 function unflag_comment(PDO $pdo, int|string $comment_id): bool
 {
     $stmt = $pdo->prepare("DELETE FROM flagged_comments WHERE comment_id = :comment_id");
     return $stmt->execute(['comment_id' => $comment_id]);
+}
+
+function mark_comment_as_answer($pdo, $comment_id)
+{
+    // Alle anderen Kommentare auf "nicht Antwort" setzen
+    $stmt1 = $pdo->prepare("
+        UPDATE post_comments
+        SET is_answer = 0
+        WHERE post_id = (
+            SELECT post_id FROM (SELECT post_id FROM post_comments WHERE id = :id) AS sub
+        )
+    ");
+    $stmt1->execute([':id' => $comment_id]);
+
+    // Den gewählten Kommentar als Antwort markieren
+    $stmt2 = $pdo->prepare("UPDATE post_comments SET is_answer = 1 WHERE id = :id");
+    $stmt2->execute([':id' => $comment_id]);
+}
+
+function fetch_answer_comment_by_post($pdo, $post_id)
+{
+    $stmt = $pdo->prepare("SELECT * FROM post_comments WHERE post_id = :post_id AND is_answer = 1");
+    $stmt->execute(['post_id' => $post_id]);
+    return $stmt->fetch(PDO::FETCH_ASSOC);
 }
 
 

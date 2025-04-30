@@ -64,7 +64,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // You do not have permission to delete this comment.
             exit('Unauthorized');
         }
-
     } elseif ($action === 'delete_post' && isset($_POST['post_id'])) {
         $post = fetch_post($pdo, $_POST['post_id']);
         if (!$post) {
@@ -98,10 +97,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             exit('Post not found.');
         }
         set_reaction($pdo, $_POST['post_id'], $user_id, $_POST['reaction']);
+    } elseif ($action === 'mark_answer' && isset($_POST['comment_id'], $_POST['post_id'])) {
+        $comment_id = (int) $_POST['comment_id'];
+        $post_id = (int) $_POST['post_id'];
+
+        $comment = fetch_comment($pdo, $comment_id);
+        $post = fetch_post($pdo, $post_id);
+
+        if (!$comment || !$post) {
+            exit('Kommentar oder Beitrag nicht gefunden.');
+        }
+
+        // Nur Autor des Beitrags oder Admin/Moderator darf markieren
+        if ($post['author_id'] === $user_id || in_array($_SESSION['role'], ['admin', 'moderator'])) {
+            mark_comment_as_answer($pdo, $comment_id);
+            header("Location: " . $_SERVER['HTTP_REFERER']);
+            exit;
+        } else {
+            // 'Sie dürfen diesen Kommentar nicht als richtige Antwort markieren.'
+            exit('Unauthorized');
+        }
     }
 } else {
     // Handle case where no POST request is made (e.g., direct access)
     exit('Invalid request method.');
 }
-
-
