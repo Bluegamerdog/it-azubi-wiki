@@ -79,7 +79,16 @@ include __DIR__ . '/includes/header.php';
             <div class="mt-3">
                 <p><?= nl2br(htmlspecialchars($post["content"])) ?></p>
             </div>
-
+            <hr class="border-body-subtle my-3">
+            <?php $answer = fetch_answer_comment_by_post($pdo, $post['id']);
+            if ($answer):
+            ?>
+                <div class="mt-3 alert alert-success">
+                    <p><?= nl2br(htmlspecialchars($answer["content"])) ?></p>
+                </div>
+            <?php
+            endif
+            ?>
             <hr class="border-body-subtle my-3">
 
             <div class="d-flex flex-wrap gap-2 mt-4">
@@ -178,7 +187,7 @@ include __DIR__ . '/includes/header.php';
                 if ($comments):
                     foreach ($comments as $comment):
                         $commentAuthor = fetch_user($pdo, $comment['author_id']);
-                        ?>
+                ?>
                         <div id="comment-<?= htmlspecialchars($comment['id']) ?>"
                             class="mt-3 p-3 border rounded position-relative">
                             <div class="d-flex align-items-center mb-2">
@@ -221,6 +230,29 @@ include __DIR__ . '/includes/header.php';
                                         </button>
                                     </form>
                                 <?php endif; ?>
+                                <!-- ✅ Mark as Answer Button -->
+                                <?php if (
+                                    $user_id &&
+                                    (
+                                        $post['author_id'] === $user_id ||
+                                        $user_role === 'admin' ||
+                                        $user_role === 'moderator'
+                                    )
+                                ): ?>
+                                    <form action="actions_post.php" method="POST" class="d-inline ms-2">
+                                        <input type="hidden" name="action" value="mark_answer">
+                                        <input type="hidden" name="comment_id" value="<?= htmlspecialchars($comment['id']) ?>">
+                                        <input type="hidden" name="post_id" value="<?= $post_id ?>">
+                                        <button type="submit" class="btn btn-sm btn-outline-success">
+                                            ✅ Mark as Answer
+                                        </button>
+                                    </form>
+                                <?php endif; ?>
+
+                                <!-- ✅ Answer Badge -->
+                                <?php if (isset($post['answer_comment_id']) && $post['answer_comment_id'] == $comment['id']): ?>
+                                    <span class="badge bg-success ms-2">✅ Answer</span>
+                                <?php endif; ?>
                             </div>
                         </div>
                     <?php endforeach ?>
@@ -252,7 +284,7 @@ include __DIR__ . '/includes/header.php';
 
 <script>
     document.querySelectorAll('.wiki-submit-btn').forEach(button => {
-        button.addEventListener('click', function () {
+        button.addEventListener('click', function() {
             document.getElementById('wiki-form').style.display = 'block';
             document.getElementById('wiki-post-id').value = this.getAttribute('data-post-id');
         });
