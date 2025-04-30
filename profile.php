@@ -83,7 +83,7 @@ include __DIR__ . '/includes/header.php';
 
 
                     <!-- Admin-Löschaktion -->
-                    <?php if ($_SESSION['role'] === 'admin' || $_SESSION['user_id'] === $user['id']): ?>
+                    <?php if (isset($_SESSION['role']) && ($_SESSION['role'] === 'admin' || $_SESSION['user_id'] === $user['id'])): ?>
                         <hr class="border-body-subtle my-4">
                         <form method="post" action="actions/actions_admin.php" class="mt-3">
                             <input type="hidden" name="user_id" value="<?= $user['id'] ?>">
