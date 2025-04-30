@@ -42,10 +42,11 @@ include __DIR__ . '/includes/header.php';
                         </div>
                     <?php endif; ?>
 
-                    <hr class="border-body-subtle my-4">
+
 
                     <!-- Nur eigener Account -->
                     <?php if ($profile_user_id == $logged_in_user_id): ?>
+                        <hr class="border-body-subtle my-4">
                         <!-- Username ändern -->
                         <form action="actions/actions_user_edit.php" method="POST" class="mb-3">
                             <div class="form-floating mb-2">
@@ -79,10 +80,11 @@ include __DIR__ . '/includes/header.php';
                         </form>
                     <?php endif; ?>
 
-                    <hr class="border-body-subtle my-4">
+
 
                     <!-- Admin-Löschaktion -->
                     <?php if ($_SESSION['role'] === 'admin' || $_SESSION['user_id'] === $user['id']): ?>
+                        <hr class="border-body-subtle my-4">
                         <form method="post" action="actions/actions_admin.php" class="mt-3">
                             <input type="hidden" name="user_id" value="<?= $user['id'] ?>">
                             <button type="submit" name="action" value="delete_user" class="btn btn-danger w-100"

@@ -1,83 +1,86 @@
-
 <?php
-session_start();
-require_once "functions/database.php";
-require_once "functions/utils.php";
-include 'includes/header.php';
+require_once __DIR__ . "/functions/database.php";
+require_once __DIR__ . "/functions/utils.php";
+start_session();
 
 $users = fetch_all_users($pdo);
+include __DIR__ . '/includes/header.php';
 ?>
-<style>
-    .table-hover tbody tr:hover {
-        background-color: #f8f9fa; /* leichtes Grau */
-        cursor: pointer;
-    }
-</style>
+
 <style>
     .profile-img {
-        transition: transform 0.15s ease-in-out;
+        width: 64px;
+        height: 64px;
+        object-fit: cover;
+        border-radius: 50%;
+        transition: transform 0.2s ease-in-out;
     }
 
     .profile-img:hover {
-        transform: scale(4); /* Vergrößert das Bild */
+        transform: scale(1.3);
         z-index: 10;
         position: relative;
     }
+
+    .user-card {
+        transition: box-shadow 0.2s;
+    }
+
+    .user-card:hover {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
 </style>
 
-
-<div class="container py-5">
-<?php
-$usersPerPage = 10;
-$totalUsers = count($users);
-$totalPages = ceil($totalUsers / $usersPerPage);
-$currentPage = isset($_GET['page']) ? (int)$_GET['page'] : 1;
-$startIndex = ($currentPage - 1) * $usersPerPage;
-$paginatedUsers = array_slice($users, $startIndex, $usersPerPage);
-?>
 <div class="container py-5">
     <h1 class="text-center mb-4">Alle Benutzer</h1>
-    <form class="mb-4" action="user_list.php" method="get">
-</form>
+
+    <?php
+    $usersPerPage = 16;
+    $totalUsers = count($users);
+    $totalPages = ceil($totalUsers / $usersPerPage);
+    $currentPage = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+    $startIndex = ($currentPage - 1) * $usersPerPage;
+    $paginatedUsers = array_slice($users, $startIndex, $usersPerPage);
+    ?>
+
     <?php if (!empty($paginatedUsers)): ?>
-        <div class="table-responsive">
-            <table class="table table-striped table-hover table-bordered align-middle">
-                <thead class="table-primary">
-                    <tr>
-                        <th>Benutzername</th>
-                        <th>Registriert am</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach ($paginatedUsers as $user): ?>
-                        <tr>
-<td>
-<?= htmlspecialchars($user['username']) ?>
-    <a href="profile.php?id=<?= $user['id'] ?>" class="avatar-wrapper">
-        <img src="<?= $user['profile_image_path'] ?? 'uploads/user_avatars/default.png'; ?>"
-             alt="Profilbild"
-             class="rounded-circle profile-img"
-             style="width: 32px; height: 32px; object-fit: cover;"
-             title="Profil von <?= htmlspecialchars($user['username']); ?>">
-    </a>
-    </td>
-    <td><?= htmlspecialchars($user['created_at']) ?></td>
-                        </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
+        <div class="row g-4">
+            <?php foreach ($paginatedUsers as $user): ?>
+                <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                    <div class="card user-card h-100 shadow-sm">
+                        <div class="card-body d-flex align-items-center">
+                            <a href="profile.php?id=<?= $user['id'] ?>">
+                                <img src="<?= $user['profile_image_path'] ?? 'uploads/user_avatars/default.png'; ?>"
+                                    alt="Profilbild"
+                                    class="me-3 profile-img"
+                                    title="Profil von <?= htmlspecialchars($user['username']); ?>">
+                            </a>
+                            <div>
+                                <h5 class="mb-1">
+                                    <a href="profile.php?id=<?= $user['id'] ?>" class="text-decoration-none text-dark">
+                                        <?= htmlspecialchars($user['username']) ?>
+                                    </a>
+                                </h5>
+                                <small class="text-muted">Registriert am <?= htmlspecialchars($user['created_at']) ?></small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <?php endforeach; ?>
         </div>
-        
-        <!-- Paginierung -->
-        <nav aria-label="Seitenavigation">
-            <ul class="pagination justify-content-center">
-                <?php for ($i = 1; $i <= $totalPages; $i++): ?>
-                    <li class="page-item <?= ($i === $currentPage) ? 'active' : ''; ?>">
-                        <a class="page-link" href="?page=<?= $i ?>"><?= $i ?></a>
-                    </li>
-                <?php endfor; ?>
-            </ul>
-        </nav>
+
+        <!-- Pagination -->
+        <?php if ($totalUsers > $usersPerPage): ?>
+            <nav aria-label="Seitennavigation" class="mt-4">
+                <ul class="pagination justify-content-center">
+                    <?php for ($i = 1; $i <= $totalPages; $i++): ?>
+                        <li class="page-item <?= ($i === $currentPage) ? 'active' : ''; ?>">
+                            <a class="page-link" href="?page=<?= $i ?>"><?= $i ?></a>
+                        </li>
+                    <?php endfor; ?>
+                </ul>
+            </nav>
+        <?php endif ?>
     <?php else: ?>
         <div class="alert alert-info text-center">
             Keine Benutzer gefunden.
@@ -85,4 +88,4 @@ $paginatedUsers = array_slice($users, $startIndex, $usersPerPage);
     <?php endif; ?>
 </div>
 
-<?php include 'includes/footer.php'; ?>
+<?php include __DIR__ . '/includes/footer.php'; ?>
