@@ -1,52 +1,83 @@
 <?php
-session_start();
-require_once 'functions/database.php';   // PDO-Verbindung
-require_once 'functions/utils.php';      // check_admin
-
+require_once __DIR__  . '/functions/database.php';   // PDO-Verbindung
+require_once __DIR__  . '/functions/utils.php';      // check_admin
+start_session();
 // Zugriff prüfen (nur Administratoren)
-// if (!isset($_SESSION["username"])) {
-//     header("Location: login.php");
-//     exit();
-// }
+$user_id = $_SESSION["user_id"] ?? NULL;
+if (!$user_id) {
+    header("Location: login.php");
+    exit();
+}
 
-// Beiträge abrufen (PDO)
-$stmt = $pdo->prepare("SELECT * FROM posts ORDER BY created_at DESC");
-$stmt->execute();
-$posts = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$id = isset($_POST['post_id']) ? $_POST['post_id'] : NULL;
+$post = $id ? fetch_post($pdo, $id) : NULL;
 
-include 'includes/header.php';
+// Wenn der Beitrag nicht existiert, zurück zur Übersicht
+if (!$post) {
+    exit("Post not found.");
+}
+if ($post['author_id'] !== $user_id) {
+    exit("No authorized to edit this post.");
+}
+
+// Initialisierung
+$title = $post['title'];
+$content = $post['content'];
+$errors = [];
+
+if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["submit"])) {
+    $title = trim($_POST["title"]);
+    $content = trim($_POST["content"]);
+
+    // Validierung
+    if (empty($title)) {
+        $errors[] = "Der Titel darf nicht leer sein.";
+    }
+    if (empty($content)) {
+        $errors[] = "Der Inhalt darf nicht leer sein.";
+    }
+
+    // Wenn keine Fehler aufgetreten sind, den Beitrag aktualisieren
+    if (empty($errors)) {
+        // Jetzt wird die Anfrage zu actions/actions_post.php gesendet
+        $_POST['action'] = 'edit_post';
+        // Weiterhin validiere die Daten auf der actions/actions_post.php-Seite
+        include 'actions/actions_post.php'; // Dies führt das Update auf actions/actions_post.php aus.
+        exit();
+    }
+}
+
+include __DIR__ . '/includes/header.php';
 ?>
 
 <div class="container mt-4">
-    <h1>Beiträge verwalten</h1>
+    <h1>Beitrag bearbeiten</h1>
 
-    <?php if (empty($posts)): ?>
-        <div class="alert alert-info">Es sind keine Beiträge vorhanden.</div>
+    <?php if (!empty($errors)): ?>
+        <div class="alert alert-danger">
+            <ul>
+                <?php foreach ($errors as $error): ?>
+                    <li><?= htmlspecialchars($error) ?></li>
+                <?php endforeach; ?>
+            </ul>
+        </div>
     <?php endif; ?>
 
-    <ul class="list-group">
-        <?php foreach ($posts as $post): ?>
-            <li class="list-group-item d-flex justify-content-between align-items-center">
-                <div>
-                    <a href="post_read.php?id=<?= htmlspecialchars($post['id']) ?>">
-                        <?= htmlspecialchars($post["title"]) ?>
-                    </a>
-                </div>
-                <div>
-                    <!-- Bearbeiten -->
-                    <a href="update_post.php?id=<?= $post['id'] ?>" class="btn btn-warning btn-sm">Bearbeiten</a>
-
-                    <!-- Löschen -->
-                    <form method="post" action="delete_post.php" class="d-inline">
-                        <input type="hidden" name="id" value="<?= htmlspecialchars($post['id']) ?>">
-                        <button type="submit" class="btn btn-danger btn-sm">Löschen</button>
-                    </form>
-                </div>
-            </li>
-        <?php endforeach; ?>
-    </ul>
-
-    <a href="create_post.php" class="btn btn-success mt-3">Neuen Beitrag erstellen</a>
+    <form action="edit_post.php" method="post">
+        <input type="hidden" name="submit" value=<?= true ?>>
+        <input type="hidden" name="post_id" value=<?= $_POST['post_id'] ?>>
+        <div class="mb-3">
+            <label for="title" class="form-label">Titel</label>
+            <input type="text" class="form-control" id="title" name="title" value="<?= htmlspecialchars($title) ?>"
+                required>
+        </div>
+        <div class="mb-3">
+            <label for="content" class="form-label">Inhalt</label>
+            <textarea class="form-control" id="content" name="content" rows="5"
+                required><?= htmlspecialchars($content) ?></textarea>
+        </div>
+        <button type="submit" class="btn btn-warning">Aktualisieren</button>
+    </form>
 </div>
 
-<?php include 'includes/footer.php'; ?>
+<?php include __DIR__ . '/includes/footer.php'; ?>

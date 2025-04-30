@@ -8,7 +8,7 @@
 $deployDir = __DIR__ . '/deploy';
 
 // List of files/folders to exclude from deployment
-$exclude = ['deploy', '.git', '.gitignore', '.example.env', '.vscode', 'docs', '.env.production', '.env.development', 'README.md'];
+$exclude = ['deploy', '.git', '.gitignore', '.example.env', '.vscode', '.env.production', '.env.development', 'README.md'];
 
 // Recursively delete a folder
 function deleteDir($dir)
@@ -51,8 +51,20 @@ echo "Cleaning old deploy folder...\n";
 deleteDir($deployDir);
 
 // Step 2: Copy root files/folders into deploy
+echo "Copying project files...\n";
 copyRecursive(__DIR__, $deployDir, $exclude);
-copy(__DIR__ . '/.env.production', $deployDir . '/.env');
+
+// Step 3: Copy .env.production to .env if it exists
+$envSource = __DIR__ . '/.env.production';
+$envDest = $deployDir . '/.env';
+
+if (file_exists($envSource)) {
+    copy($envSource, $envDest);
+    echo "Copied .env.production → /deploy/.env\n";
+} else {
+    echo "⚠️  Warning: .env.production not found. Skipping .env copy.\n";
+}
+
 
 
 echo "\n✅ Deploy folder ready! Upload the contents of /deploy to your server via FTP.\n";

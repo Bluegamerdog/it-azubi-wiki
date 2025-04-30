@@ -1,6 +1,7 @@
 <?php
-session_start();
-require_once "functions/database.php";
+require_once __DIR__  . "/functions/database.php";
+require_once __DIR__  . "/functions/utils.php";
+start_session();
 
 if (isset($_SESSION['username'])) {
     header("Location: index.php");
@@ -51,7 +52,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["sent"])) {
     }
 }
 
-include 'includes/header.php';
+include __DIR__ . '/includes/header.php';
 ?>
 
 
@@ -95,4 +96,4 @@ include 'includes/header.php';
     </div>
 </div>
 
-<?php include 'includes/footer.php'; ?>
+<?php include __DIR__ . '/includes/footer.php'; ?>

@@ -1,6 +1,6 @@
 <?php
 
-require_once 'functions/database.php';
+require_once __DIR__  . '/functions/database.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $wiki_category_id = $_POST['wiki_category_id'] ?? NULL; // Taghiri be estefade az sotune wiki_category_id

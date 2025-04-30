@@ -1,8 +1,8 @@
 <?php
-session_start();
+require_once __DIR__  . '/functions/database.php';
+require_once __DIR__  . '/functions/utils.php';
 
-require_once 'functions/database.php';
-require_once 'functions/utils.php';
+start_session();
 
 // Prüfen ob Post-ID übergeben wurde
 if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
@@ -38,7 +38,7 @@ $userReaction = $user_id ? fetch_user_reaction($pdo, $post_id, $user_id) : null;
 $pageTitle = "IT Wiki";
 $pageHeader = "IT Wiki";
 $pageHref = "wiki.php";
-include 'includes/header.php';
+include __DIR__ . '/includes/header.php';
 ?>
 
 <div class="container mt-4">
@@ -80,7 +80,7 @@ include 'includes/header.php';
             <!-- Show bookmark button for logged in users -->
             <?php if ($user_id && $post_id):
                 $isBookmarked = is_post_bookmarked($pdo, $user_id, $post_id); ?>
-                <form action="actions_post.php" method="post" class="d-inline">
+                <form action="actions/actions_post.php" method="post" class="d-inline">
                     <input type="hidden" name="post_id" value="<?= htmlspecialchars($post_id) ?>">
                     <input type="hidden" name="user_id" value="<?= htmlspecialchars($user_id) ?>">
                     <input type="hidden" name="isBookmarked" value="<?= $isBookmarked ? 1 : 0 ?>">
@@ -103,4 +103,4 @@ include 'includes/header.php';
 </div>
 </div>
 
-<?php include 'includes/footer.php'; ?>
+<?php include __DIR__ . '/includes/footer.php'; ?>

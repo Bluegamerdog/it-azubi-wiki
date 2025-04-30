@@ -1,9 +1,9 @@
 <?php
-session_start();
-require_once 'functions/database.php';
-require_once 'functions/utils.php';
-include 'includes/header.php';
+require_once __DIR__  . '/functions/database.php';
+require_once __DIR__  . '/functions/utils.php';
+include __DIR__  . '/includes/header.php';
 
+start_session();
 // Get the filters from the GET request
 $sorted_by = $_GET['sorted_by'] ?? 'newest';
 $days_old = $_GET['days_old'] ?? 'all';
@@ -125,4 +125,4 @@ if ($days_old != 'all') {
 
 </div>
 
-<?php include 'includes/footer.php'; ?>
+<?php include __DIR__ . '/includes/footer.php'; ?>
