@@ -170,7 +170,7 @@ verifyLoginState($pdo);
                         <a href="profiles.php" class="nav-link text-body py-2">Benutzer</a>
                     </li>
 
-                    <?php if (isset($_SESSION['role']) && $_SESSION['role'] == 'admin'): ?>
+                    <?php if (isset($_SESSION['role']) && ($_SESSION['role'] == 'admin' || $_SESSION['role'] == 'moderator')): ?>
                         <li class="nav-item border-bottom border-body-subtle">
                             <a href="admin.php" class="nav-link text-body py-2">Admin Panel</a>
                         </li>
