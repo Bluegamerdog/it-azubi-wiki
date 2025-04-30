@@ -36,9 +36,15 @@ include __DIR__ . '/includes/header.php';
 ?>
 
 <script>
-    function togglePassword() {
-        const passwordField = document.getElementById("password");
-        passwordField.type = passwordField.type === "password" ? "text" : "password";
+    function togglePassword(inputId, btn) {
+        const field = document.getElementById(inputId);
+        if (field.type === "password") {
+            field.type = "text";
+            btn.textContent = "Hide";
+        } else {
+            field.type = "password";
+            btn.textContent = "Show";
+        }
     }
 </script>
 
@@ -63,7 +69,7 @@ include __DIR__ . '/includes/header.php';
                     <label for="password" class="form-label">Passwort</label>
                     <div class="input-group">
                         <input type="password" id="password" name="password" class="form-control" required>
-                        <button class="btn btn-outline-secondary" type="button" onclick="togglePassword()">⓿</button>
+                        <button class="btn btn-outline-secondary" type="button" onclick="togglePassword('password', this)">Show</button>
                     </div>
                 </div>
                 <button type="submit" class="btn btn-primary w-100">Login</button>

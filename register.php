@@ -58,16 +58,18 @@ include __DIR__ . '/includes/header.php';
 
 
 <script>
-    function togglePassword() {
-        const passwordField = document.getElementById("password_eingabe");
-        passwordField.type = passwordField.type === "password" ? "text" : "password";
-    }
-
-    function togglePassword2() {
-        const passwordField = document.getElementById("password_wiederholung");
-        passwordField.type = passwordField.type === "password" ? "text" : "password";
+    function togglePassword(inputId, btn) {
+        const field = document.getElementById(inputId);
+        if (field.type === "password") {
+            field.type = "text";
+            btn.textContent = "Hide";
+        } else {
+            field.type = "password";
+            btn.textContent = "Show";
+        }
     }
 </script>
+
 
 <div class="container mt-5">
     <div class="row justify-content-center">
@@ -85,21 +87,23 @@ include __DIR__ . '/includes/header.php';
                         value="<?php echo htmlspecialchars($username ?? ''); ?>" required>
                 </div>
                 <div class="mb-3">
-                    <label for="passwort_eingabe" class="form-label">Passwort</label>
+                    <label for="password_eingabe" class="form-label">Passwort</label>
                     <div class="input-group">
-                        <input type="password" id="password_eingabe" name="password_eingabe" class="form-control" required
+                        <input type="password" id="password_eingabe" name="password_eingabe" class="form-control"
                             value="<?php echo htmlspecialchars($password ?? ''); ?>" required>
-                        <button class="btn btn-outline-secondary" type="button" onclick="togglePassword()">⓿</button>
+                        <button class="btn btn-outline-secondary" type="button" onclick="togglePassword('password_eingabe', this)">Show</button>
                     </div>
                 </div>
+
                 <div class="mb-3">
-                    <label for="password_wiederholung" class="form-label">Passwort</label>
+                    <label for="password_wiederholung" class="form-label">Passwort wiederholen</label>
                     <div class="input-group">
-                        <input type="password" id="password_wiederholung" name="password_wiederholung" class="form-control" required
-                            value="<?php echo htmlspecialchars($password ?? ''); ?>" required>
-                        <button class="btn btn-outline-secondary" type="button" onclick="togglePassword2()">⓿</button>
+                        <input type="password" id="password_wiederholung" name="password_wiederholung" class="form-control"
+                            value="<?php echo htmlspecialchars($password_wiederholen ?? ''); ?>" required>
+                        <button class="btn btn-outline-secondary" type="button" onclick="togglePassword('password_wiederholung', this)">Show</button>
                     </div>
                 </div>
+
                 <div class="mb-3">
                     <label for="email" class="form-label">Email</label>
                     <input type="email" class="form-control" id="email" name="email"
