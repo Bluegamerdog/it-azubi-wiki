@@ -35,6 +35,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 include __DIR__ . '/includes/header.php';
 ?>
 
+<script>
+    function togglePassword(inputId, btn) {
+        const field = document.getElementById(inputId);
+        if (field.type === "password") {
+            field.type = "text";
+            btn.textContent = "Hide";
+        } else {
+            field.type = "password";
+            btn.textContent = "Show";
+        }
+    }
+</script>
 
 <div class="container mt-4">
     <div class="row justify-content-center">
@@ -55,7 +67,10 @@ include __DIR__ . '/includes/header.php';
                 </div>
                 <div class="mb-3">
                     <label for="password" class="form-label">Passwort</label>
-                    <input type="password" id="password" name="password" class="form-control" required>
+                    <div class="input-group">
+                        <input type="password" id="password" name="password" class="form-control" required>
+                        <button class="btn btn-outline-secondary" type="button" onclick="togglePassword('password', this)">Show</button>
+                    </div>
                 </div>
                 <button type="submit" class="btn btn-primary w-100">Login</button>
             </form>
