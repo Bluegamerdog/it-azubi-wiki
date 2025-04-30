@@ -94,7 +94,12 @@ include __DIR__ . '/includes/header.php';
                                     <?= htmlspecialchars($answerAuthor['username']) ?>
                                 </a>
                             </strong>
-                            <small class="text-muted ms-1">(<?= time_ago($answerComment['created_at']) ?> als lösung markiert)</small>
+                            <small class="text-muted ms-1">·
+                                <a href="<?= "read_forum_post.php?id=" . $answerComment['post_id'] . "#comment-" . $answerComment['id'] ?>" class="text-decoration-none">
+                                    Lösung ansehen
+                                </a>
+                            </small>
+
                         </div>
                     </div>
                     <p class="mb-0"><?= nl2br(htmlspecialchars($answerComment["content"])) ?></p>
