@@ -6,7 +6,7 @@ start_session();
 // Get the filters from the GET request
 $sorted_by = $_GET['sorted_by'] ?? 'newest';
 $days_old = $_GET['days_old'] ?? 'all';
-$category_id = $_GET['category_id'] ?? NULL;
+$category_id = $_GET['category_id'] ?? 'all';
 
 // Fetch the posts based on filters
 $posts = fetch_all_wiki_posts($pdo, $sorted_by, $days_old, $category_id); // true = nur wiki
@@ -48,7 +48,7 @@ include __DIR__ . '/includes/header.php';
             <div class="col-md-2  ms-auto">
                 <label for="category_id" class="form-label">Kategory</label>
                 <select name="category_id" class="form-select form-select-sm">
-                    <option value=<?= NULL ?> <?= $category_id == NULL ? 'selected' : '' ?>>Alle</option>
+                    <option value=<?= 'all' ?> <?= $category_id == 'all' ? 'selected' : '' ?>>Alle</option>
                     <option value=<?= 0 ?> <?= $category_id == 0 ? 'selected' : '' ?>>Keine</option>
                     <?php foreach ($wikiCategories as $wikiCategory): ?>
                         <option value=<?= $wikiCategory['id'] ?>     <?= $category_id == $wikiCategory['id'] ? 'selected' : '' ?>>

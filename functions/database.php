@@ -160,6 +160,8 @@ function fetch_all_wiki_posts(PDO $pdo, $sorted_by = 'newest', $days_old = 'all'
         case 0;
             $whereClause .= " AND wiki_category_id IS NULL";
             break;
+        case 'all';
+            break;
         case !null:
             $whereClause .= " AND wiki_category_id = :wiki_category_id";
             $params['wiki_category_id'] = $category_id;
