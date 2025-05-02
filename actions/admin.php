@@ -9,6 +9,8 @@ $permissionsTable = [
     'delete_user' => ['admin'],
     'unflag_comment' => ['admin', 'moderator'],
     'unflag_post' => ['admin', 'moderator'],
+    'create_wiki_entry' => ['admin', 'moderator'],
+    'delete_wiki_entry' => ['admin', 'moderator'],
 ];
 
 function canPerformAction($action, $userRole, $userId, $targetUserId = null)
@@ -74,8 +76,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         unflag_post($pdo, $_POST['post_id']);
         header("Location: " . $_SERVER['HTTP_REFERER']);
         exit;
-    } elseif ($action === 'unflag_post' && isset($_POST['post_id'])) {
+    } elseif ($action === 'create_wiki_entry' && isset($_POST['post_id'])) {
         create_wiki_entry($pdo, $_POST['post_id'], $_POST['wiki_category_id'] ?? null);
+        header("Location: " . $_SERVER['HTTP_REFERER']);
+        exit;
+    } elseif ($action === 'delete_wiki_entry' && isset($_POST['post_id'])) {
+        delete_wiki_entry($pdo, $_POST['post_id']);
         header("Location: " . $_SERVER['HTTP_REFERER']);
         exit;
     }
@@ -83,5 +89,3 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Handle case where no POST request is made (e.g., direct access)
     exit('Invalid request method.');
 }
-
-

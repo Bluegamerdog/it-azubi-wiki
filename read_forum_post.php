@@ -165,12 +165,48 @@ include __DIR__ . '/includes/header.php';
                 <?php endif; ?>
 
                 <!-- Wiki Submission -->
-                <?php if (($user_role === 'admin' || $user_role === 'moderator') && !$post['is_wiki_entry'] == true): ?>
-                    <form action="submit_wiki.php?id=<?= $post_id ?>" method="POST" class="d-inline">
-                        <input type="hidden" name="post_id" value="<?= htmlspecialchars($post_id) ?>">
-                        <button class="btn btn-outline-warning wiki-submit-btn">📚 Wiki Submission</button>
-                    </form>
+                <?php if (($user_role === 'admin' || $user_role === 'moderator') && !$post['is_wiki_entry']): ?>
+                    <!-- Trigger Button -->
+                    <button type="button" class="btn btn-outline-warning" data-bs-toggle="modal" data-bs-target="#wikiModal">
+                        📚 Wiki Submission
+                    </button>
                 <?php endif; ?>
+
+                <!-- Wiki Submission Modal -->
+                <div class="modal fade" id="wikiModal" tabindex="-1" aria-labelledby="wikiModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <form action="actions/admin.php" method="POST">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="wikiModalLabel">Wiki-Beitrag einreichen</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Schließen"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="mb-3">
+                                        <label for="wiki_category" class="form-label">Kategorie</label>
+                                        <select class="form-control" id="wiki_category" name="wiki_category_id" required>
+                                            <option value="">Bitte Kategorie auswählen...</option>
+                                            <?php
+                                            $categories = fetch_all_wiki_categories($pdo);
+                                            foreach ($categories as $category) {
+                                                echo '<option value="' . $category['id'] . '">' . htmlspecialchars($category['name']) . '</option>';
+                                            }
+                                            ?>
+                                        </select>
+                                    </div>
+
+                                    <input type="hidden" name="post_id" value="<?= htmlspecialchars($post_id) ?>">
+                                    <input type="hidden" name="action" value="create_wiki_entry">
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Abbrechen</button>
+                                    <button type="submit" class="btn btn-primary">Speichern</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
 
             </div>
 
@@ -276,27 +312,5 @@ include __DIR__ . '/includes/header.php';
     </div>
 </div>
 
-<!-- Wiki Form (Hidden by default) -->
-<div id="wiki-form" style="display:none; margin-top:20px;">
-    <form method="POST" action="submit_wiki.php">
-        <input type="hidden" name="post_id" id="wiki-post-id">
-        <label for="category">Kategorie auswählen:</label>
-        <select name="category" id="category" required>
-            <option value="1">Netzwerk</option>
-            <option value="3">Programmieren</option>
-            <option value="4">Betriebssysteme</option>
-        </select>
-        <button type="submit">Absenden</button>
-    </form>
-</div>
-
-<script>
-    document.querySelectorAll('.wiki-submit-btn').forEach(button => {
-        button.addEventListener('click', function() {
-            document.getElementById('wiki-form').style.display = 'block';
-            document.getElementById('wiki-post-id').value = this.getAttribute('data-post-id');
-        });
-    });
-</script>
 
 <?php include __DIR__ . '/includes/footer.php'; ?>

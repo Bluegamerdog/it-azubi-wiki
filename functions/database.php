@@ -102,6 +102,26 @@ function fetch_all_wiki_categories(PDO $pdo): array
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
+function create_wiki_entry(PDO $pdo, int|string $post_id, string|null $wiki_category_id = NULL): array
+{
+    $stmt = $pdo->prepare("UPDATE posts SET wiki_category_id = :wiki_category_id, is_wiki_entry =:is_wiki_entry WHERE id = :post_id");
+    $stmt->execute([
+        'wiki_category_id' => $wiki_category_id,
+        'is_wiki_entry' => true,
+        'post_id' => $post_id
+    ]);
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
+function delete_wiki_entry(PDO $pdo, int|string $post_id)
+{
+    $stmt = $pdo->prepare("UPDATE posts SET wiki_category_id = :wiki_category_id, is_wiki_entry =:is_wiki_entry WHERE id = :post_id");
+    return $stmt->execute([
+        'wiki_category_id' => NULL,
+        'is_wiki_entry' => false,
+        'post_id' => $post_id
+    ]);
+}
 
 // == POSTS ==
 
@@ -177,7 +197,6 @@ function fetch_all_wiki_posts(PDO $pdo, $sorted_by = 'newest', $days_old = 'all'
             $orderBy = "ORDER BY created_at DESC";
             break;
     }
-
 
     $stmt = $pdo->prepare("SELECT * FROM posts $whereClause $orderBy");
     $stmt->execute($params);
