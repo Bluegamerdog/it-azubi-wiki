@@ -119,15 +119,30 @@ verifyLoginState($pdo);
         }
 
         .nav-link.hover-effect {
-            transition: all 0.3s ease;
+            transition: background-color 0.3s ease, color 0.3s ease, transform 0.3s ease;
+            position: relative;
+            z-index: 1;
+        }
 
+        .nav-link.hover-effect::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-color: rgba(0, 123, 255, 0.24);
+            border-radius: 0.375rem;
+            opacity: 0;
+            transform: translateX(-10px);
+            transition: all 0.3s ease;
+            z-index: -1;
+        }
+
+        .nav-link.hover-effect:hover::before {
+            opacity: 1;
+            transform: translateX(0);
         }
 
         .nav-link.hover-effect:hover {
-            background-color: #f1f1f1;
             color: #007bff;
-            transform: scale(1.05);
-            border-radius: 5px;
         }
     </style>
 
