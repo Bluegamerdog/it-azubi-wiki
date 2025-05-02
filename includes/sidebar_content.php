@@ -2,20 +2,21 @@
 <div class="mb-3">
     <ul class="nav flex-column">
         <li class="nav-item border-bottom border-body-subtle">
-            <a href="index.php" class="nav-link text-body py-2">Forum</a>
+            <a href="index.php" class="nav-link text-body py-2 hover-effect">Forum</a>
         </li>
         <li class="nav-item border-bottom border-body-subtle">
-            <a href="wiki.php" class="nav-link text-body py-2">Wiki</a>
+            <a href="wiki.php" class="nav-link text-body py-2 hover-effect">Wiki</a>
         </li>
         <li class="nav-item border-bottom border-body-subtle">
-            <a href="profiles.php" class="nav-link text-body py-2">Benutzer</a>
+            <a href="profiles.php" class="nav-link text-body py-2 hover-effect">Benutzer</a>
         </li>
 
         <?php if (isset($_SESSION['role']) && ($_SESSION['role'] == 'admin' || $_SESSION['role'] == 'moderator')): ?>
             <li class="nav-item border-bottom border-body-subtle">
-                <a href="admin.php" class="nav-link text-body py-2">Admin Panel</a>
+                <a href="admin.php" class="nav-link text-body py-2 hover-effect">Admin Panel</a>
             </li>
         <?php endif; ?>
+
     </ul>
 </div>
 
@@ -30,7 +31,7 @@
         <ul class="nav flex-column">
             <?php foreach (fetch_user_bookmarks($pdo, $_SESSION['user_id']) as $bookmarkedPost): ?>
                 <li class="nav-item border-bottom border-body-subtle">
-                    <a href=<?= "read_forum_post.php?id=" . $bookmarkedPost['id'] ?> class="nav-link text-body py-1">
+                    <a href=<?= "read_forum_post.php?id=" . $bookmarkedPost['id'] ?> class="nav-link hover-effect text-body py-1">
                         <?= nl2br(htmlspecialchars(substr($bookmarkedPost['content'], 0, 15))) . (strlen($bookmarkedPost['content']) > 15 ? '...' : '') ?></a>
                 </li>
             <?php endforeach; ?>

@@ -16,7 +16,8 @@ verifyLoginState($pdo);
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js" defer></script>
     <script src="assets/js/darkmode.js" defer></script>
 
-    <link rel="icon" href="assets/favicon.ico" type="image/x-icon">
+    <!-- <link rel="icon" href="assets/favicon.ico" type="image/x-icon"> -->
+    <link rel="icon" href="assets/logo_white.png" type="image/png">
 
     <style>
         /* Custom sidebar styles */
@@ -116,6 +117,18 @@ verifyLoginState($pdo);
             flex-direction: column;
             justify-content: space-between;
         }
+
+        .nav-link.hover-effect {
+            transition: all 0.3s ease;
+
+        }
+
+        .nav-link.hover-effect:hover {
+            background-color: #f1f1f1;
+            color: #007bff;
+            transform: scale(1.05);
+            border-radius: 5px;
+        }
     </style>
 
 </head>
@@ -128,6 +141,11 @@ verifyLoginState($pdo);
             <button class="btn btn-outline-secondary d-lg-none me-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebarOffcanvas" aria-controls="sidebarOffcanvas">
                 ☰
             </button>
+
+            <a class="navbar-brand" href="<?= htmlspecialchars($pageHref ?? "index.php") ?>">
+                <img src="assets/logo.png" alt="Website Logo" class="img-fluid" style="max-height: 40px;">
+            </a>
+
 
             <a class="navbar-brand" href="<?= htmlspecialchars($pageHref ?? "index.php") ?>"><?= htmlspecialchars($pageHeader ?? "IT Forum") ?></a>
 
