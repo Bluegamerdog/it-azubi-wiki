@@ -80,7 +80,7 @@ include __DIR__ . '/includes/header.php';
             <!-- Show bookmark button for logged in users -->
             <?php if ($user_id && $post_id):
                 $isBookmarked = is_post_bookmarked($pdo, $user_id, $post_id); ?>
-                <form action="actions/actions_post.php" method="post" class="d-inline">
+                <form action="actions/post.php" method="post" class="d-inline">
                     <input type="hidden" name="post_id" value="<?= htmlspecialchars($post_id) ?>">
                     <input type="hidden" name="user_id" value="<?= htmlspecialchars($user_id) ?>">
                     <input type="hidden" name="isBookmarked" value="<?= $isBookmarked ? 1 : 0 ?>">

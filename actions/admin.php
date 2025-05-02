@@ -74,6 +74,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         unflag_post($pdo, $_POST['post_id']);
         header("Location: " . $_SERVER['HTTP_REFERER']);
         exit;
+    } elseif ($action === 'unflag_post' && isset($_POST['post_id'])) {
+        create_wiki_entry($pdo, $_POST['post_id'], $_POST['wiki_category_id'] ?? null);
+        header("Location: " . $_SERVER['HTTP_REFERER']);
+        exit;
     }
 } else {
     // Handle case where no POST request is made (e.g., direct access)
