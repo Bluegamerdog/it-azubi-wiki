@@ -165,7 +165,7 @@ include __DIR__ . '/includes/header.php';
                 <?php endif; ?>
 
                 <!-- Wiki Submission -->
-                <?php if ($user_role === 'admin' || $user_role === 'moderator'): ?>
+                <?php if (($user_role === 'admin' || $user_role === 'moderator') && !$post['is_wiki_entry'] == true): ?>
                     <form action="submit_wiki.php?id=<?= $post_id ?>" method="POST" class="d-inline">
                         <input type="hidden" name="post_id" value="<?= htmlspecialchars($post_id) ?>">
                         <button class="btn btn-outline-warning wiki-submit-btn">📚 Wiki Submission</button>
