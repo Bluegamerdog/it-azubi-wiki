@@ -57,7 +57,7 @@ include __DIR__ . '/includes/header.php';
                             </a>
                             <div>
                                 <h5 class="mb-1">
-                                    <a href="profile.php?id=<?= $user['id'] ?>" class="text-decoration-none text-dark">
+                                    <a href="profile.php?id=<?= $user['id'] ?>" class="text-decoration-none">
                                         <?= htmlspecialchars($user['username']) ?>
                                     </a>
                                 </h5>
