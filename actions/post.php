@@ -72,7 +72,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($post['author_id'] === $user_id || $_SESSION['role'] === 'admin' || $_SESSION['role'] === 'moderator') {
             delete_post($pdo, $_POST['post_id']);
 
-            header("Location: index.php");
+            header("Location: ../index.php");
             exit;
         } else {
             // You do not have permission to delete this post.

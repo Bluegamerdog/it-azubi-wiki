@@ -63,7 +63,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($user_id === $targetUserId) {
             session_unset();
             session_destroy();
-            header("Location: login.php");
+            header("Location: ../login.php");
         } else {
             header("Location: " . $_SERVER['HTTP_REFERER']);
         }
