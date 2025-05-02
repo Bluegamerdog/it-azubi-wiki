@@ -17,7 +17,7 @@ verifyLoginState($pdo);
     <script src="assets/js/darkmode.js" defer></script>
 
     <!-- <link rel="icon" href="assets/favicon.ico" type="image/x-icon"> -->
-    <link rel="icon" href="assets/logo.png" type="image/png">
+    <link rel="icon" href="assets/logo_white.png" type="image/png">
 
     <style>
         /* Custom sidebar styles */
