@@ -117,6 +117,18 @@ verifyLoginState($pdo);
             flex-direction: column;
             justify-content: space-between;
         }
+
+        .nav-link.hover-effect {
+            transition: all 0.3s ease;
+
+        }
+
+        .nav-link.hover-effect:hover {
+            background-color: #f1f1f1;
+            color: #007bff;
+            transform: scale(1.05);
+            border-radius: 5px;
+        }
     </style>
 
 </head>
