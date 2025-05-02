@@ -50,8 +50,8 @@ include __DIR__ . '/includes/header.php';
         <div class="col-md-12">
             <!-- Post Header: Profile picture, username, and post time -->
             <div class="d-flex align-items-center mb-2">
-                <img src="<?= htmlspecialchars($author['profile_image_path'] ?? 'uploads/user_avatars/default.png'); ?>"
-                    alt="Profilbild" class="rounded-circle me-2" style="width: 30px; height: 30px; object-fit: cover;">
+                <img src="<?= get_profile_image_path($author) ?>"
+                    alt="" class="rounded-circle me-2" style="width: 30px; height: 30px; object-fit: cover;">
                 <div>
                     <div class="d-flex align-items-center gap-2">
                         <strong>
@@ -86,8 +86,8 @@ include __DIR__ . '/includes/header.php';
                 <hr class="border-body-subtle my-3">
                 <div class="mt-4 p-4 bg-success-subtle border border-success rounded">
                     <div class="d-flex align-items-center mb-2">
-                        <img src="<?= htmlspecialchars($answerAuthor['profile_image_path'] ?? 'uploads/user_avatars/default.png') ?>"
-                            alt="Answer Author" class="rounded-circle me-2" style="width: 30px; height: 30px; object-fit: cover;">
+                        <img src="<?= get_profile_image_path($answerAuthor) ?>"
+                            alt="" class="rounded-circle me-2" style="width: 30px; height: 30px; object-fit: cover;">
                         <div>
                             <strong>
                                 <a href="profile.php?id=<?= htmlspecialchars($answerAuthor['id']) ?>" class="text-decoration-none text-success-emphasis">
@@ -241,8 +241,8 @@ include __DIR__ . '/includes/header.php';
                         <div id="comment-<?= htmlspecialchars($comment['id']) ?>"
                             class="mt-3 p-3 border rounded position-relative">
                             <div class="d-flex align-items-center mb-2">
-                                <img src="<?= htmlspecialchars($commentAuthor['profile_image_path'] ?? 'uploads/user_avatars/default.png') ?>"
-                                    alt="Commentor" class="rounded-circle me-2"
+                                <img src="<?= get_profile_image_path($commentAuthor) ?>"
+                                    alt="" class="rounded-circle me-2"
                                     style="width: 30px; height: 30px; object-fit: cover;">
                                 <strong>
                                     <a href="profile.php?id=<?= htmlspecialchars($commentAuthor['id']) ?>"

@@ -57,7 +57,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         // Handle avatar upload
         if ($action === 'upload_avatar' && isset($_FILES['avatar']) && $_FILES['avatar']['error'] === 0) {
-            $uploadDir = 'uploads/user_avatars/';
+            $uploadDir = __DIR__ . '/../uploads/user_avatars/';
             $fileTmp = $_FILES['avatar']['tmp_name'];
             $fileName = basename($_FILES['avatar']['name']);
             $fileExt = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
@@ -71,30 +71,91 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             } else {
                 $newFileName = "avatar_user_" . $user_id . "." . $fileExt;
                 $uploadPath = $uploadDir . $newFileName;
+                $sanityPath = "uploads/user_avatars/" . $newFileName;
 
                 if (!file_exists($uploadDir)) {
                     mkdir($uploadDir, 0755, true);
                 }
 
-                if (move_uploaded_file($fileTmp, $uploadPath)) {
-                    update_user($pdo, $user_id, ['profile_image_path' => $uploadPath]);
-                    $_SESSION['profilbild'] = $uploadPath;
+                $maxWidth = 512;
+                $maxHeight = 512;
+
+                $imageInfo = getimagesize($fileTmp);
+                if (!$imageInfo) {
+                    $_SESSION['responseData'] = [
+                        'response_message' => "❌ Die Datei ist kein gültiges Bild.",
+                        'response_type' => "danger"
+                    ];
+                } else {
+                    $width = $imageInfo[0];
+                    $height = $imageInfo[1];
+                    $mime = $imageInfo['mime'];
+
+                    // Resize if needed
+                    if ($width > $maxWidth || $height > $maxHeight) {
+                        $ratio = min($maxWidth / $width, $maxHeight / $height);
+                        $newWidth = (int)($width * $ratio);
+                        $newHeight = (int)($height * $ratio);
+
+                        switch ($mime) {
+                            case 'image/jpeg':
+                                $srcImage = imagecreatefromjpeg($fileTmp);
+                                break;
+                            case 'image/png':
+                                $srcImage = imagecreatefrompng($fileTmp);
+                                break;
+                            case 'image/gif':
+                                $srcImage = imagecreatefromgif($fileTmp);
+                                break;
+                            default:
+                                $_SESSION['responseData'] = [
+                                    'response_message' => "❌ Nicht unterstütztes Bildformat.",
+                                    'response_type' => "danger"
+                                ];
+                                return;
+                        }
+
+                        $dstImage = imagecreatetruecolor($newWidth, $newHeight);
+                        imagecopyresampled($dstImage, $srcImage, 0, 0, 0, 0, $newWidth, $newHeight, $width, $height);
+
+                        switch ($mime) {
+                            case 'image/jpeg':
+                                imagejpeg($dstImage, $uploadPath);
+                                break;
+                            case 'image/png':
+                                imagepng($dstImage, $uploadPath);
+                                break;
+                            case 'image/gif':
+                                imagegif($dstImage, $uploadPath);
+                                break;
+                        }
+
+                        imagedestroy($srcImage);
+                        imagedestroy($dstImage);
+                    } else {
+                        // Image is already small enough
+                        if (!move_uploaded_file($fileTmp, $uploadPath)) {
+                            $_SESSION['responseData'] = [
+                                'response_message' => "❌ Fehler beim Verschieben der Datei.",
+                                'response_type' => "danger"
+                            ];
+                            return;
+                        }
+                    }
+
+                    update_user($pdo, $user_id, ['profile_image_path' => $sanityPath]);
+                    $_SESSION['profile_image_path'] = $sanityPath;
                     $_SESSION['responseData'] = [
                         'response_message' => "✔️ Avatar erfolgreich hochgeladen!",
                         'response_type' => "success"
-                    ];
-                } else {
-                    $_SESSION['responseData'] = [
-                        'response_message' => "❌ Fehler beim Verschieben der Datei.",
-                        'response_type' => "danger"
                     ];
                 }
             }
         }
 
+
         // Redirect to the profile page after updating
-        header('Location: profile.php?id=' . $user_id);
+        header('Location: ../profile.php?id=' . $user_id);
         exit();
     }
 }
-?>

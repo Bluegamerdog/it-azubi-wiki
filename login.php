@@ -3,7 +3,7 @@ require_once __DIR__  . "/functions/database.php";
 require_once __DIR__  . "/functions/utils.php";
 start_session();
 
-if (isset($_SESSION['username']) && isset($_SESSION['user_id'])) {
+if (get_logged_in_user()) {
     header("Location: index.php");
     exit(); // Already logged in
 }
@@ -22,7 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $_SESSION['username'] = $username;
         $_SESSION['user_id'] = $user['id'];
         $_SESSION['role'] = $user['role']; // 'user', 'moderator', 'admin'
-        $_SESSION['profilbild'] = $user['profile_image_path'];
+        $_SESSION['profile_image_path'] = $user['profile_image_path'];
         session_write_close();
         header("Location: index.php");
         exit();

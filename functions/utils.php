@@ -2,8 +2,7 @@
 
 require_once __DIR__ . '/database.php';
 
-
-function loadEnv($path)
+function loadEnv($path): void
 {
     if (!file_exists($path))
         return;
@@ -25,7 +24,24 @@ function loadEnv($path)
     }
 }
 
-function start_session()
+function get_profile_image_path($source = null): string
+{
+    $source ??= $_SESSION;
+    return isset($source['profile_image_path']) && file_exists($source['profile_image_path']) ? htmlspecialchars($source['profile_image_path']) : 'uploads/user_avatars/default.png';
+}
+
+function get_logged_in_user(): array|null
+{
+    return isset($_SESSION['user_id'], $_SESSION['role'], $_SESSION['username'],  $_SESSION['profile_image_path']) ? [
+        'id' => (int) $_SESSION['user_id'],
+        'role' => (string) $_SESSION['role'],
+        'username' => (string) $_SESSION['username'],
+        'profile_image_path' => get_profile_image_path(),
+    ] : null;
+}
+
+
+function start_session(): void
 {
     if (session_status() !== PHP_SESSION_ACTIVE) {
         session_name("itf");
@@ -37,7 +53,7 @@ function verifyLoginState(PDO $pdo): bool
 {
     start_session();
 
-    if (!isset($_SESSION['user_id'])) {
+    if (!get_logged_in_user()) {
         return false;
     }
 

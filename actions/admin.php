@@ -38,14 +38,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit('NO PERMISSIONS SET UP FOR ACTION');
     }
 
-    $user_id = $_SESSION['user_id'] ?? null;
-    $user_role = $_SESSION['role'] ?? null;
-    if (!isset($user_id) || !isset($user_role)) {
+    $user = get_logged_in_user();
+    if (!$user) {
         exit('Unverified.');
     }
 
-    $targetUserId = (int) $_POST['user_id'] ?? null;
-    if (!canPerformAction($action, $user_role, $user_id, $targetUserId)) {
+    $targetUserId = $targetUserId = isset($_POST['user_id']) ? (int) $_POST['user_id'] : null;
+    if (!canPerformAction($action, $user['role'], $user['id'], $targetUserId)) {
         exit('Unauthorized.');
     }
 
@@ -60,7 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     } elseif ($action === 'delete_user' && isset($_POST['user_id'])) {
         delete_user($pdo, $_POST['user_id']);
-        if ($user_id === $targetUserId) {
+        if ($user['id'] === $targetUserId) {
             session_unset();
             session_destroy();
             header("Location: ../login.php");

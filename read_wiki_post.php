@@ -47,8 +47,8 @@ include __DIR__ . '/includes/header.php';
         <div class="col-md-12">
             <!-- Post Header: Profile picture, username, and post time -->
             <div class="d-flex align-items-center mb-4">
-                <img src="<?= htmlspecialchars($author['profile_image_path'] ?? 'uploads/user_avatars/default.png'); ?>"
-                    alt="Profilbild" class="rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover;">
+                <img src="<?= get_profile_image_path($author) ?>"
+                    alt="" class="rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover;">
                 <div>
                     <div class="d-flex align-items-center gap-2">
                         <strong>

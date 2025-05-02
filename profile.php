@@ -16,7 +16,7 @@ if (!$user) {
     exit();
 }
 
-$avatar = $user['profile_image_path'] ?? 'default.png';
+$avatar = get_profile_image_path();
 
 include __DIR__ . '/includes/header.php';
 ?>
@@ -27,7 +27,7 @@ include __DIR__ . '/includes/header.php';
             <div class="card shadow border-0">
                 <div class="card-body text-center">
                     <!-- Avatar -->
-                    <img src="<?= htmlspecialchars($avatar) ?>" alt="Avatar"
+                    <img src="<?= htmlspecialchars($avatar) ?>" alt=""
                         class="rounded-circle border shadow-sm mb-3"
                         style="width: 150px; height: 150px; object-fit: cover;">
 

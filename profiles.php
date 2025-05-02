@@ -50,7 +50,7 @@ include __DIR__ . '/includes/header.php';
                     <div class="card user-card h-100 shadow-sm">
                         <div class="card-body d-flex align-items-center">
                             <a href="profile.php?id=<?= $user['id'] ?>">
-                                <img src="<?= $user['profile_image_path'] ?? 'uploads/user_avatars/default.png'; ?>"
+                                <img src="<?= get_profile_image_path($user) ?>"
                                     alt="Profilbild"
                                     class="me-3 profile-img"
                                     title="Profil von <?= htmlspecialchars($user['username']); ?>">

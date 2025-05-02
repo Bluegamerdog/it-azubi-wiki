@@ -3,7 +3,7 @@ require_once __DIR__  . "/functions/database.php";
 require_once __DIR__  . "/functions/utils.php";
 start_session();
 
-if (isset($_SESSION['username'])) {
+if (get_logged_in_user()) {
     header("Location: index.php");
     exit(); // Already logged in
 }

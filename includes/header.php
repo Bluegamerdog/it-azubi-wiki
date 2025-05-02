@@ -157,7 +157,7 @@ verifyLoginState($pdo);
                     <div class="dropdown d-flex align-items-center">
                         <button class="btn btn-outline-secondary d-flex align-items-center gap-2" type="button" id="userMenu" data-bs-toggle="dropdown" aria-expanded="false">
                             <span><?= htmlspecialchars($_SESSION['username']) ?></span>
-                            <img src="<?= $_SESSION['profilbild'] ?? 'uploads/user_avatars/default.png'; ?>" alt="Profilbild" class="rounded-circle" style="width: 32px; height: 32px; object-fit: cover;">
+                            <img src="<?= get_profile_image_path() ?>" alt="" class="rounded-circle" style="width: 32px; height: 32px; object-fit: cover;">
                         </button>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenu">
                             <li><a class="dropdown-item" href="profile.php">Zum Profil</a></li>

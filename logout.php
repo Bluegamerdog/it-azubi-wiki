@@ -2,7 +2,6 @@
 require_once __DIR__  . "/functions/utils.php";
 start_session();
 
-
 // Überprüfen, ob der Logout-Button gedrückt wurde
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['logout'])) {
     // Alle Session-Daten löschen
