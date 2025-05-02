@@ -28,6 +28,7 @@ function loadEnv($path)
 function start_session()
 {
     if (session_status() !== PHP_SESSION_ACTIVE) {
+        session_name("itf");
         session_start();
     }
 }
@@ -86,4 +87,3 @@ function time_ago(string $timestamp, $lowercaseVor = false): string
         return ($years == 1) ? ($vor . " einem Jahr") : ($vor . " $years Jahren");
     }
 }
-
