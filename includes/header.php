@@ -16,6 +16,8 @@ verifyLoginState($pdo);
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js" defer></script>
     <script src="assets/js/darkmode.js" defer></script>
 
+    <link rel="icon" href="assets/favicon.ico" type="image/x-icon">
+
     <style>
         /* Custom sidebar styles */
         .sidebar {
@@ -120,25 +122,42 @@ verifyLoginState($pdo);
 
 <body class="d-flex flex-column min-vh-100">
     <!-- Top Nav Bar -->
-    <nav class="navbar navbar-expand-sm navbar-light top-nav">
+    <nav class="navbar navbar-expand-lg navbar-light top-nav">
         <div class="container-fluid">
-            <a class="navbar-brand" href=<?= htmlspecialchars($pageHref ?? "index.php") ?>><?= htmlspecialchars($pageHeader ?? "IT Forum") ?></a>
-            <form class="d-flex search-bar">
+            <!-- Offcanvas toggle button for small screens -->
+            <button class="btn btn-outline-secondary d-lg-none me-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebarOffcanvas" aria-controls="sidebarOffcanvas">
+                ☰
+            </button>
+
+            <a class="navbar-brand" href="<?= htmlspecialchars($pageHref ?? "index.php") ?>"><?= htmlspecialchars($pageHeader ?? "IT Forum") ?></a>
+
+            <!-- Collapsible search input -->
+            <form class="d-none d-md-flex search-bar mx-auto">
                 <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
             </form>
+
+            <!-- Mobile Search Button -->
+            <button class="d-flex d-md-none btn btn-outline-primary search-btn mx-auto" type="button" id="searchButton">
+                <i class="bi bi-search"></i>
+            </button>
+
+            <!-- Collapsing Search Bar for Mobile -->
+            <div class="collapse" id="searchCollapse">
+                <form class="d-md-none search-bar mx-auto mt-2">
+                    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+                </form>
+            </div>
+            <!-- Right side: auth or user dropdown -->
             <div class="d-flex ms-auto align-items-center">
                 <?php if (!isset($_SESSION['username'])): ?>
-                    <span class="navbar-text">Gast</span>
-                    <a href="login.php" class="btn btn-outline-primary">Log in</a>
+                    <span class="navbar-text me-2">Gast</span>
+                    <a href="login.php" class="btn btn-outline-primary me-2">Log in</a>
                     <a href="register.php" class="btn btn-primary">Sign up</a>
                 <?php else: ?>
                     <div class="dropdown d-flex align-items-center">
-                        <button class="btn btn-outline-secondary d-flex align-items-center gap-2" type="button"
-                            id="userMenu" data-bs-toggle="dropdown" aria-expanded="false">
+                        <button class="btn btn-outline-secondary d-flex align-items-center gap-2" type="button" id="userMenu" data-bs-toggle="dropdown" aria-expanded="false">
                             <span><?= htmlspecialchars($_SESSION['username']) ?></span>
-                            <img src="<?= $_SESSION['profilbild'] ?? 'uploads/user_avatars/default.png'; ?>"
-                                alt="Profilbild" class="rounded-circle"
-                                style="width: 32px; height: 32px; object-fit: cover;">
+                            <img src="<?= $_SESSION['profilbild'] ?? 'uploads/user_avatars/default.png'; ?>" alt="Profilbild" class="rounded-circle" style="width: 32px; height: 32px; object-fit: cover;">
                         </button>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenu">
                             <li><a class="dropdown-item" href="profile.php">Zum Profil</a></li>
@@ -148,61 +167,31 @@ verifyLoginState($pdo);
                             <li><a class="dropdown-item" href="logout.php">Logout</a></li>
                         </ul>
                     </div>
-
                 <?php endif; ?>
             </div>
         </div>
     </nav>
 
+
     <div class="d-flex">
         <!-- Sidebar -->
-        <nav class="sidebar p-3 d-flex flex-column border-end border-body-subtle" style="min-width: 250px;">
-            <!-- Main Nav Links -->
-            <div class="mb-3">
-                <ul class="nav flex-column">
-                    <li class="nav-item border-bottom border-body-subtle">
-                        <a href="index.php" class="nav-link text-body py-2">Forum</a>
-                    </li>
-                    <li class="nav-item border-bottom border-body-subtle">
-                        <a href="wiki.php" class="nav-link text-body py-2">Wiki</a>
-                    </li>
-                    <li class="nav-item border-bottom border-body-subtle">
-                        <a href="profiles.php" class="nav-link text-body py-2">Benutzer</a>
-                    </li>
-
-                    <?php if (isset($_SESSION['role']) && ($_SESSION['role'] == 'admin' || $_SESSION['role'] == 'moderator')): ?>
-                        <li class="nav-item border-bottom border-body-subtle">
-                            <a href="admin.php" class="nav-link text-body py-2">Admin Panel</a>
-                        </li>
-                    <?php endif; ?>
-                </ul>
+        <!-- Offcanvas Sidebar for small screens -->
+        <div class="offcanvas offcanvas-start d-lg-none" tabindex="-1" id="sidebarOffcanvas" aria-labelledby="sidebarOffcanvasLabel">
+            <div class="offcanvas-header border-bottom">
+                <h5 class="offcanvas-title fw-bold" id="sidebarOffcanvasLabel">Menü</h5>
+                <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
             </div>
-
-            <?php if (isset($_SESSION['user_id'])): ?>
-                <!-- Bookmark Header -->
-                <div class="mb-2 border-top border-body-subtle pt-3">
-                    <h5 class="text-body mb-2">Lesezeichen</h5>
+            <div class="offcanvas-body px-3 pt-2">
+                <div class="sidebar-content">
+                    <?php include 'sidebar_content.php'; ?>
                 </div>
+            </div>
+        </div>
 
-                <!-- Bookmark List -->
-                <div class="bookmark-list flex-grow-1 overflow-auto mb-3">
-                    <ul class="nav flex-column">
-                        <?php foreach (fetch_user_bookmarks($pdo, $_SESSION['user_id']) as $bookmarkedPost): ?>
-                            <li class="nav-item border-bottom border-body-subtle">
-                                <a href=<?= "read_forum_post.php?id=" . $bookmarkedPost['id'] ?> class="nav-link text-body py-1">
-                                    <?= nl2br(htmlspecialchars(substr($bookmarkedPost['content'], 0, 15))) . (strlen($bookmarkedPost['content']) > 15 ? '...' : '') ?></a>
-                            </li>
-                        <?php endforeach; ?>
-                    </ul>
-                </div>
-            <?php endif ?>
-
-            <!-- Dark Mode Toggle -->
-            <hr class="border-body-subtle my-3">
-            <button id="darkModeToggle" class="btn btn-sm btn-secondary mt-auto">🌙</button>
+        <!-- Static Sidebar for large screens -->
+        <nav class="sidebar p-3 d-none d-lg-flex flex-column border-end border-body-subtle" style="min-width: 250px;">
+            <?php include 'sidebar_content.php'; ?>
         </nav>
-
-
 
         <main class="main-content flex-grow-1 flex-wrapper">
             <div class="container mt-4">
