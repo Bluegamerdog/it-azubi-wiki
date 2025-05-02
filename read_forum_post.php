@@ -127,7 +127,7 @@ include __DIR__ . '/includes/header.php';
                 <!-- Bookmark -->
                 <?php if ($user_id):
                     $isBookmarked = is_post_bookmarked($pdo, $user_id, $post_id); ?>
-                    <form action="actions/actions_post.php" method="post" class="d-inline">
+                    <form action="actions/post.php" method="post" class="d-inline">
                         <input type="hidden" name="post_id" value="<?= htmlspecialchars($post_id) ?>">
                         <input type="hidden" name="isBookmarked" value="<?= $isBookmarked ? 1 : 0 ?>">
                         <button type="submit" class="btn <?= $isBookmarked ? 'btn-success' : 'btn-outline-info' ?>"
@@ -137,7 +137,7 @@ include __DIR__ . '/includes/header.php';
 
                 <!-- Report -->
                 <?php if ($user_id && !is_post_flagged($pdo, $post_id)): ?>
-                    <form action="actions/actions_post.php" method="post" class="d-inline"
+                    <form action="actions/post.php" method="post" class="d-inline"
                         onsubmit="return confirm('Bist du sicher, dass du diesen Beitrag melden möchtest?');">
                         <input type="hidden" name="post_id" value="<?= htmlspecialchars($post_id) ?>">
                         <button type="submit" class="btn btn-outline-danger" name="action" value="flag_post">🚩
@@ -156,7 +156,7 @@ include __DIR__ . '/includes/header.php';
 
                 <!-- Delete -->
                 <?php if ($user_role === 'admin' || $user_role === 'moderator' || ($user_id && $user_id == $post['author_id'])): ?>
-                    <form action="actions/actions_post.php" method="POST"
+                    <form action="actions/post.php" method="POST"
                         onsubmit="return confirm('Are you sure you want to delete this post?');" class="d-inline">
                         <input type="hidden" name="post_id" value="<?= htmlspecialchars($post_id) ?>">
                         <button type="submit" class="btn btn-outline-danger" name="action" value="delete_post">🗑️
@@ -165,21 +165,56 @@ include __DIR__ . '/includes/header.php';
                 <?php endif; ?>
 
                 <!-- Wiki Submission -->
-                <?php if ($user_role === 'admin' || $user_role === 'moderator'): ?>
-                    <form action="submit_wiki.php?id=<?= $post_id ?>" method="POST" class="d-inline">
-                        <input type="hidden" name="post_id" value="<?= htmlspecialchars($post_id) ?>">
-                        <button class="btn btn-outline-warning wiki-submit-btn">📚 Wiki Submission</button>
-                    </form>
+                <?php if (($user_role === 'admin' || $user_role === 'moderator') && !$post['is_wiki_entry']): ?>
+                    <!-- Trigger Button -->
+                    <button type="button" class="btn btn-outline-warning" data-bs-toggle="modal" data-bs-target="#wikiModal">
+                        📚 Wiki Submission
+                    </button>
                 <?php endif; ?>
 
-            </div>
+                <!-- Wiki Submission Modal -->
+                <div class="modal fade" id="wikiModal" tabindex="-1" aria-labelledby="wikiModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <form action="actions/admin.php" method="POST">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="wikiModalLabel">Wiki-Beitrag einreichen</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Schließen"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="mb-3">
+                                        <label for="wiki_category" class="form-label">Kategorie</label>
+                                        <select class="form-control" id="wiki_category" name="wiki_category_id" required>
+                                            <option value="">Bitte Kategorie auswählen...</option>
+                                            <?php
+                                            $categories = fetch_all_wiki_categories($pdo);
+                                            foreach ($categories as $category) {
+                                                echo '<option value="' . $category['id'] . '">' . htmlspecialchars($category['name']) . '</option>';
+                                            }
+                                            ?>
+                                        </select>
+                                    </div>
 
+                                    <input type="hidden" name="post_id" value="<?= htmlspecialchars($post_id) ?>">
+                                    <input type="hidden" name="action" value="create_wiki_entry">
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Abbrechen</button>
+                                    <button type="submit" class="btn btn-primary">Speichern</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
 
             <!-- Comment Form -->
             <?php if ($user_id): ?>
                 <div class="mt-4">
                     <h5>Post a Comment</h5>
-                    <form action="actions/actions_post.php" method="POST">
+                    <form action="actions/post.php" method="POST">
                         <textarea name="content" class="form-control" rows="4" placeholder="Write your comment..."
                             required></textarea>
                         <input type="hidden" name="post_id" value="<?= $post_id ?>">
@@ -224,7 +259,7 @@ include __DIR__ . '/includes/header.php';
                                 <div class="d-flex"></div>
                                 <!-- Report Button -->
                                 <?php if ($user_id && !is_comment_flagged($pdo, $comment['id'])): ?>
-                                    <form action="actions/actions_post.php" method="POST" class="d-inline">
+                                    <form action="actions/post.php" method="POST" class="d-inline">
                                         <input type="hidden" name="comment_id" value="<?= htmlspecialchars($comment['id']) ?>">
                                         <button type="submit" name="action" value="flag_comment" class="btn btn-sm btn-warning">
                                             Report
@@ -237,7 +272,7 @@ include __DIR__ . '/includes/header.php';
                                     ($user_id && $comment['author_id'] == $user_id) ||
                                     ($user_role === 'admin' || $user_role === 'moderator')
                                 ): ?>
-                                    <form action="actions/actions_post.php" method="POST" class="d-inline"
+                                    <form action="actions/post.php" method="POST" class="d-inline"
                                         onsubmit="return confirm('Are you sure you want to delete this comment?');">
                                         <input type="hidden" name="comment_id" value="<?= htmlspecialchars($comment['id']) ?>">
                                         <button type="submit" name="action" value="delete_comment" class="btn btn-sm btn-danger ms-2">
@@ -248,7 +283,7 @@ include __DIR__ . '/includes/header.php';
 
                                 <!-- ✅ Mark as Answer Button -->
                                 <?php if ($answerComment && $answerComment['id'] !== $comment['id'] && $user_id && ($post['author_id'] === $user_id || $user_role === 'admin' || $user_role === 'moderator')): ?>
-                                    <form action="actions/actions_post.php" method="POST" class="d-inline">
+                                    <form action="actions/post.php" method="POST" class="d-inline">
                                         <input type="hidden" name="action" value="mark_answer">
                                         <input type="hidden" name="comment_id" value="<?= htmlspecialchars($comment['id']) ?>">
                                         <input type="hidden" name="post_id" value="<?= $post_id ?>">
@@ -277,27 +312,5 @@ include __DIR__ . '/includes/header.php';
     </div>
 </div>
 
-<!-- Wiki Form (Hidden by default) -->
-<div id="wiki-form" style="display:none; margin-top:20px;">
-    <form method="POST" action="submit_wiki.php">
-        <input type="hidden" name="post_id" id="wiki-post-id">
-        <label for="category">Kategorie auswählen:</label>
-        <select name="category" id="category" required>
-            <option value="1">Netzwerk</option>
-            <option value="3">Programmieren</option>
-            <option value="4">Betriebssysteme</option>
-        </select>
-        <button type="submit">Absenden</button>
-    </form>
-</div>
-
-<script>
-    document.querySelectorAll('.wiki-submit-btn').forEach(button => {
-        button.addEventListener('click', function() {
-            document.getElementById('wiki-form').style.display = 'block';
-            document.getElementById('wiki-post-id').value = this.getAttribute('data-post-id');
-        });
-    });
-</script>
 
 <?php include __DIR__ . '/includes/footer.php'; ?>

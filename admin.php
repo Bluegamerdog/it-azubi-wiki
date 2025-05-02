@@ -36,7 +36,7 @@ include __DIR__ . '/includes/header.php';
                                 <td><?= htmlspecialchars($user['role']) ?></td>
                                 <td>
                                     <?php if ($user['role'] == 'moderator'): ?>
-                                        <form method="post" action="actions/actions_admin.php" class="d-inline">
+                                        <form method="post" action="actions/admin.php" class="d-inline">
                                             <input type="hidden" name="user_id" value="<?= $user['id'] ?>">
                                             <button type="submit" name="action" value="demote_moderator"
                                                 class="btn btn-sm btn-success">Zum
@@ -44,7 +44,7 @@ include __DIR__ . '/includes/header.php';
                                         </form>
                                     <?php endif ?>
                                     <?php if ($user['role'] == 'user'): ?>
-                                        <form method="post" action="actions/actions_admin.php" class="d-inline">
+                                        <form method="post" action="actions/admin.php" class="d-inline">
                                             <input type="hidden" name="user_id" value="<?= $user['id'] ?>">
                                             <button type="submit" name="action" value="promote_moderator"
                                                 class="btn btn-sm btn-success">Zum
@@ -52,7 +52,7 @@ include __DIR__ . '/includes/header.php';
                                         </form>
                                     <?php endif ?>
                                     <?php if ($user['role'] !== 'admin'): ?>
-                                        <form method="post" action="actions/actions_admin.php" class="d-inline">
+                                        <form method="post" action="actions/admin.php" class="d-inline">
                                             <input type="hidden" name="user_id" value="<?= $user['id'] ?>">
                                             <button type="submit" name="action" value="delete_user" class="btn btn-sm btn-danger"
                                                 onclick="return confirm('Benutzer wirklich löschen?')">Löschen</button>
@@ -97,12 +97,12 @@ include __DIR__ . '/includes/header.php';
                             <td><a href=<?= "profile.php?id=" . $reportingUser['id'] ?>><?= htmlspecialchars($reportingUser['username']) ?></a>
                             </td>
                             <td>
-                                <form method="post" action="actions/actions_admin.php" class="d-inline">
+                                <form method="post" action="actions/admin.php" class="d-inline">
                                     <input type="hidden" name="post_id" value="<?= $reportedPost['id'] ?>">
                                     <button type="submit" name="action" value="unflag_post" class="btn btn-sm btn-success"
                                         onclick="return confirm('Post wirklich entflaggen?')">Entflaggen</button>
                                 </form>
-                                <form method="post" action="actions/actions_post.php" class="d-inline">
+                                <form method="post" action="actions/post.php" class="d-inline">
                                     <input type="hidden" name="post_id" value="<?= $reportedPost['id'] ?>">
                                     <button type="submit" name="action" value="delete_post" class="btn btn-sm btn-danger"
                                         onclick="return confirm('Post wirklich lösen?')">Löschen</button>
@@ -141,13 +141,13 @@ include __DIR__ . '/includes/header.php';
                             <td><a href=<?= "profile.php?id=" . $reportingUser['id'] ?>><?= htmlspecialchars($reportingUser['username']) ?></a>
                             </td>
                             <td>
-                                <form method="post" action="actions/actions_admin.php" class="d-inline">
+                                <form method="post" action="actions/admin.php" class="d-inline">
                                     <input type="hidden" name="comment_id" value="<?= $comment['comment_id'] ?>">
                                     <button type="submit" name="action" value="unflag_comment"
                                         class="btn btn-sm btn-success"
                                         onclick="return confirm('Kommentar wirklich entflaggen?')">Entflaggen</button>
                                 </form>
-                                <form method="post" action="actions/actions_post.php" class="d-inline">
+                                <form method="post" action="actions/post.php" class="d-inline">
                                     <input type="hidden" name="comment_id" value="<?= $comment['comment_id'] ?>">
                                     <button type="submit" name="action" value="delete_comment" class="btn btn-sm btn-danger"
                                         onclick="return confirm('Kommentar wirklich lösen?')">Löschen</button>

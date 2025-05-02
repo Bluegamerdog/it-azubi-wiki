@@ -39,10 +39,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["submit"])) {
 
     // Wenn keine Fehler aufgetreten sind, den Beitrag aktualisieren
     if (empty($errors)) {
-        // Jetzt wird die Anfrage zu actions/actions_post.php gesendet
+        // Jetzt wird die Anfrage zu actions/post.php gesendet
         $_POST['action'] = 'edit_post';
-        // Weiterhin validiere die Daten auf der actions/actions_post.php-Seite
-        include 'actions/actions_post.php'; // Dies führt das Update auf actions/actions_post.php aus.
+        // Weiterhin validiere die Daten auf der actions/post.php-Seite
+        include 'actions/post.php'; // Dies führt das Update auf actions/post.php aus.
         exit();
     }
 }
